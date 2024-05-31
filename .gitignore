@@ -1,0 +1,9 @@
+# Credentials files
+*creds.json
+
+# Binary files
+*.png
+*.jpg
+*.pdf
+
+__pycache__/
