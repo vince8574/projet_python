@@ -8,8 +8,10 @@ export function ProductCreate() {
     const [isFrozen, setIsFrozen] = useState(null);
     const [dateFreeze, setDateFreeze] = useState(null);
     const [nbFreeze, setNbFreeze] = useState(null);
-    const [description, setDescription] = useState(null);
+    const [designation, setDesignation] = useState(null);
 
+
+    
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -20,10 +22,10 @@ export function ProductCreate() {
         }
 
         const product = {
-            
+            designation,
             totalLot,
-            dateCreation: selectedDate,
-            dateFreeze: isFrozen === 'oui' ? selectedDate : null,
+            dateCreation: selectedDate.toLocaleDateString(),
+            dateFreeze: isFrozen === 'oui' ? selectedDate.toLocaleDateString() : "XXXX-XX-XX",
             nbFreeze,
         };
 
@@ -42,6 +44,7 @@ export function ProductCreate() {
     };
 
     const sendDataToBackend = async (product) => {
+        console.log(product)
         try {
             const response = await fetch('http://127.0.0.1:8080/product', {
                 method: 'POST',
@@ -65,7 +68,7 @@ export function ProductCreate() {
             <form onSubmit={handleSubmit}>
                 <div className="flex flex-wrap w-4/5">
                     <label htmlFor="description" className="customerinfo charm-bold">Description</label>
-                    <input id="description" type="text" className="validate charm-regular" value={description} onChange={(e) => setDescription(e.target.value)} />
+                    <input id="description" type="text" className="validate charm-regular" value={designation} onChange={(e) => setDesignation(e.target.value)} />
                 </div>
                 <div className="flex flex-wrap w-4/5">
                     <label htmlFor="totalLot" className="customerinfo charm-bold">Nombre de lots</label>

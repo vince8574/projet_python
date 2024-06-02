@@ -17,7 +17,7 @@ export function MyDatePicker({selectedDate, setSelectedDate}) {
         selected={selectedDate}
         value={selectedDate}
         onChange={handleDateChange}
-        dateFormat="dd/MM/yyyy"
+        dateFormat="yyyy-MM-dd"
         isClearable
         placeholderText="Sélectionnez une date"
         
