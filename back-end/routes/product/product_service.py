@@ -1,5 +1,6 @@
 from .product_repository import ProductsRepository
 from .product import Products
+from ..qr_code.qr_code import QrCode
 
 class ProductService:
   def __init__(self):
@@ -11,8 +12,8 @@ class ProductService:
   def create_product(self, p: Products) -> Products:
     return self.repository.create_product(p)
   
-  def get_product_by_id(self, id):
-    return self.repository.get_product_by_id(id)
+  def get_product_by_id(self):
+    return self.repository.get_product_by_id()
   
   def delete_product_by_id(self, id):
     return self.delete_product_by_id(id)

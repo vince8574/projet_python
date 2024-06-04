@@ -10,8 +10,6 @@ export function ProductCreate() {
     const [nbFreeze, setNbFreeze] = useState(null);
     const [designation, setDesignation] = useState(null);
 
-
-    
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -23,18 +21,16 @@ export function ProductCreate() {
 
         const product = {
             designation,
-            totalLot,
-            dateCreation: selectedDate.toLocaleDateString(),
-            dateFreeze: isFrozen === 'oui' ? selectedDate.toLocaleDateString() : "XXXX-XX-XX",
-            nbFreeze,
+            totalLot: parseInt(totalLot, 10), // Convertir totalLot en entier
+            dateCreation: selectedDate.toISOString().split('T')[0],
+            dateFreeze: isFrozen === 'oui' ? selectedDate.toISOString().split('T')[0] : "XXXX-XX-XX",
+            nbFreeze: parseInt(nbFreeze, 10),
         };
 
         localStorage.setItem('totalLot', totalLot);
         localStorage.setItem('selectedDate', selectedDate);
         localStorage.setItem('dateFreeze', product.dateFreeze);
 
-        
-        
         await sendDataToBackend(product);
         
         localStorage.removeItem('totalLot');
@@ -46,10 +42,11 @@ export function ProductCreate() {
     const sendDataToBackend = async (product) => {
         console.log(product)
         try {
-            const response = await fetch('http://127.0.0.1:8080/product', {
+            const response = await fetch('http://localhost:8080/product/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify(product),
             });
@@ -62,23 +59,23 @@ export function ProductCreate() {
     };
 
     return (
-      <div className='formulaire'> 
-          <h1 className="">{afterSubmit ? 'Produit enregistré' : 'Produit'}</h1>
+      <div className='rounded-2xl m-auto w-[80%] bg-emerald-100'> 
+          <h1 className="text-center">{afterSubmit ? 'Produit enregistré' : 'Produit'}</h1>
           {!afterSubmit && (
-            <form onSubmit={handleSubmit}>
-                <div className="flex flex-wrap w-4/5">
-                    <label htmlFor="description" className="customerinfo charm-bold">Description</label>
-                    <input id="description" type="text" className="validate charm-regular" value={designation} onChange={(e) => setDesignation(e.target.value)} />
+            <form onSubmit={handleSubmit} className='mt-8'>
+                <div className="w-[80%] m-auto flex flex-wrap">
+                    <label htmlFor="description" className="text-center size-full">Description</label>
+                    <input id="description" type="text" className="border border-black border-solid bg-slate-100 w-[80%] m-auto" value={designation} onChange={(e) => setDesignation(e.target.value)} />
                 </div>
-                <div className="flex flex-wrap w-4/5">
-                    <label htmlFor="totalLot" className="customerinfo charm-bold">Nombre de lots</label>
-                    <input id="totalLot" type="text" className="validate charm-regular" value={totalLot} onChange={(e) => setTotalLot(e.target.value)} />
+                <div className="w-[80%] m-auto flex flex-wrap">
+                    <label htmlFor="totalLot" className="text-center size-full mt-4">Nombre de lots</label>
+                    <input id="totalLot" type="text" className="border border-black border-solid bg-slate-100 w-[80%] m-auto" value={totalLot} onChange={(e) => setTotalLot(e.target.value)} />
                 </div>
-                <div className='picker'>
+                <div className='text-center size-full mt-4'>
                     <span>Date de fabrication</span>
                     <MyDatePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>
                 </div>
-                <div className="label">
+                <div className="mt-4 size-full text-center">
                     <label className="customerinfo charm-bold">Congelé</label>
                 <div>
                   <label>
@@ -90,7 +87,7 @@ export function ProductCreate() {
                     />
                     Oui
                   </label>
-                  <label>
+                  <label className='mx-8'>
                     <input 
                       type="radio" 
                       value="non" 
@@ -101,12 +98,12 @@ export function ProductCreate() {
                   </label>
                 </div>
                 </div>
-                <div>
-                    <label htmlFor="nbFreeze" className="customerinfo charm-bold">Nombre de lots congelés</label>
-                    <input id="nbFreeze" type="text" className="validate charm-regular" value={nbFreeze} onChange={(e) => setNbFreeze(e.target.value)} />
+                <div className='w-[80%] m-auto flex flex-wrap'>
+                    <label htmlFor="nbFreeze" className="text-center size-full mt-4">Nombre de lots congelés</label>
+                    <input id="nbFreeze" type="text" className="border border-black border-solid bg-slate-100 w-[80%] m-auto" value={nbFreeze} onChange={(e) => setNbFreeze(e.target.value)} />
                 </div>
-                <div className='submit'>
-                    <button className="btnSubmit" type="submit">Enregistrer</button>
+                <div className='submit mt-4 border border-black border-solid bg-purple-200 m-auto text-center w-1/3 rounded-full'>
+                    <button className="" type="submit">Enregistrer</button>
                 </div>
             </form>
           )}

@@ -21,13 +21,15 @@ class ProductsController(MethodView):
   @product.arguments(CreateProduct)
   @product.response(status_code=201, schema=ProductResponse)
   def post(self, product: dict):
+    print("POST product", product)
     return product_service.create_product(to_entity(product))
   
-  @product.route("/<id>")
+  
+  @product.route("/scan")
   class SingleProductController(MethodView):
     @product.response(status_code=200, schema=ProductResponse)
-    def get(self, id: str):
-      return product_service.get_product_by_id(id)
+    def get(self):
+      return product_service.get_product_by_id()
     
     @product.response(status_code=204)
     def delete(self, id: str):

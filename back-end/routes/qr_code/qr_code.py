@@ -1,6 +1,5 @@
 import cv2
 from pyzbar.pyzbar import decode
-import time
 import qrcode
 from PIL import Image
 
@@ -11,7 +10,7 @@ class QrCode:
     def generate(self, id:str ="", numLot:str=""):
         
         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
-        qr.add_data(f'ID: {id}, NumLot: {numLot}')
+        qr.add_data(f'{id}')
         qr.make(fit=True)
         qr_img = qr.make_image(fill_color="black", back_color="white")
         qr_img.save("qr_code3.png")
@@ -31,14 +30,18 @@ class QrCode:
                 print("La caméra ne fonctionne pas")
 
             for i in decode(frame):
-                print(i.type)
-                print(i.data.decode('utf-8'))
-                time.sleep(6)
+                
+                id=i.data.decode('utf-8')
+                camera=False
+                break
 
-            cv2.imshow("Qr_Code_Scanner", frame)
+            cv2.imshow("Scannez votre QRCODE, q pour quitter", frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
+                camera = False
                 break
 
         cam.release()
         cv2.destroyAllWindows()
+        print(id)
+        return id

@@ -15,13 +15,13 @@ def to_entity(product_data: dict | DocumentReference | DocumentSnapshot) -> Prod
   print(product_data)
 
   p.designation = product_data["designation"]
-  p.numLot = product_data["numLot"]
+  p.numLot = product_data.get('numLot', -1)
   p.totalLot = product_data["totalLot"]
   p.dateCreation = product_data["dateCreation"]
   p.dateFreeze = product_data["dateFreeze"]
-  p.dateDefrost = product_data["dateDefrost"]
-  p.picture = product_data["picture"]
-  p.pdf = product_data["pdf"]
+  p.dateDefrost = product_data.get("dateDefrost", '')
+  p.picture = product_data.get("picture", '')
+  p.pdf = product_data.get("pdf", '')
   p.nbFreeze = product_data["nbFreeze"]
   return p
 

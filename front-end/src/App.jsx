@@ -10,7 +10,7 @@ function App() {
           
       <Router>
         <div>
-          <h1 className="text-red-500">Save Food</h1>
+          <h1 className="text-center ">Save Food</h1>
           <Routes>
             <Route path="/" element={<Introduction />} />
             <Route path="/product" element={<ProductCreate />} />

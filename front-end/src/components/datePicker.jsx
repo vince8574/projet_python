@@ -12,7 +12,7 @@ export function MyDatePicker({selectedDate, setSelectedDate}) {
     <div>
           
       <DatePicker
-        className='validate charm-bold'
+        className=' bg-slate-100 w-[80%] m-auto'
         locale={fr}
         selected={selectedDate}
         value={selectedDate}

@@ -1,14 +1,11 @@
 import os
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 from fpdf import FPDF
+from io import BytesIO
 from routes.qr_code.qr_code import QrCode
 from config.database import db, bucket
-from io import BytesIO
 from .product import Products
 from .product_mapper import to_entity, to_dict
 import cv2
-
 
 # Create the class for managing the books collection
 class ProductsRepository:
@@ -63,7 +60,12 @@ class ProductsRepository:
     def get_all(self) -> list[Products]:
         return [to_entity(product) for product in self.collection.stream()]
 
-    def get_product_by_id(self, id: str) -> dict:
+    def get_product_by_id(self) -> dict:
+        qr = QrCode()
+        id = qr.scanner()
+        # Convertir l'id en chaîne de caractères et supprimer les espaces blancs en début et fin
+        #id = str(id).strip()
+        print(f"l'id scanné est : {id}")
         try:
             doc = self.collection.document(id).get()
             if doc.exists:
@@ -147,11 +149,11 @@ class ProductsRepository:
       
         img_counter = 0
         photos_taken = []
-
+        camera = True
         # Créer les répertoires nécessaires
         os.makedirs(save_path, exist_ok=True)
 
-        while True:
+        while camera:
             success, frame = cam.read()
 
             # Vérifier si l'image a été capturée avec succès
@@ -167,6 +169,7 @@ class ProductsRepository:
                 print("Escape hit, closing the app")
                 cam.release()
                 cv2.destroyAllWindows()
+                camera = False
                 break
             elif k % 256 == 32: # correspond à la barre espace
                 img_name = f"opencv_frame_{img_counter}.png"

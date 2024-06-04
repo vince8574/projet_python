@@ -16,11 +16,13 @@ while camera:
     for i in decode(frame):
         print(i.type)
         print(i.data.decode('utf-8'))
-        time.sleep(6)
+        camera = False
+        break
 
-    cv2.imshow("Qr_Code_Scanner", frame)
+    cv2.imshow("Scanner votre QRCODE, q pour quitter", frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
+        camera = False
         break
 
 cam.release()
