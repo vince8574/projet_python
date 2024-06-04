@@ -1,7 +1,6 @@
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export function Introduction() {
-
     const navigate = useNavigate();
 
     const sendDataToBackend = async () => {
@@ -12,7 +11,6 @@ export function Introduction() {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-               
             });
             const data = await response.json();
             console.log('Success:', data);
@@ -22,14 +20,9 @@ export function Introduction() {
         }
     };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        await sendDataToBackend();
-    }
-
     const handleScanner = async () => {
-        await sendDataToBackend();
-        navigate("/scan");
+        const data = await sendDataToBackend();
+        navigate("/scan", { state: { data } });
     }
 
     const handleProduct = () => {
