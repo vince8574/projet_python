@@ -39,7 +39,7 @@ class ProductsRepository:
         dateDefrost = doc_Ref.dateDefrost
   
         pdf = self.pdf_maker(id, designation, dateCreation, dateFreeze, dateDefrost)
-    
+        
         # Définir le chemin dans Firebase Storage
         blob = self.bucket.blob(f'pdfs/{id}.pdf')
         
@@ -129,6 +129,7 @@ class ProductsRepository:
         pdf.cell(50)
         pdf.cell(120, 10, f"Décongelé le: {dateDefrost}")
 
+        pdf.output("pdf_temp.pdf")
         # Enregistrer le PDF dans un objet BytesIO
         pdf_output = BytesIO()
         pdf_str = pdf.output(dest='S').encode('latin1')  # Obtenir le contenu du PDF en tant que chaîne de caractères

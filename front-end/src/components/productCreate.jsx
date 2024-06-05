@@ -38,7 +38,7 @@ export function ProductCreate() {
         localStorage.removeItem('dateCreation');
         localStorage.removeItem('dateFreeze');
         setAfterSubmit(true);
-        setPdfUrl(response.pdf);
+        
     };
 
     const sendDataToBackend = async (product) => {
@@ -54,6 +54,7 @@ export function ProductCreate() {
             });
             const data = await response.json();
             console.log('Success:', data);
+            setPdfUrl(data.pdfUrl);
             return data
         } catch (error) {
             console.error('Error:', error);
