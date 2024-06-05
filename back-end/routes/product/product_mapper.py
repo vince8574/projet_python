@@ -20,7 +20,7 @@ def to_entity(product_data: dict | DocumentReference | DocumentSnapshot) -> Prod
   p.dateCreation = product_data["dateCreation"]
   p.dateFreeze = product_data["dateFreeze"]
   p.dateDefrost = product_data.get("dateDefrost", '')
-  p.picture = product_data.get("picture", '')
+  p.photos = product_data.get("photos", '')
   p.pdf = product_data.get("pdf", '')
   p.nbFreeze = product_data["nbFreeze"]
   return p
@@ -34,7 +34,7 @@ def toUpdateEntity(product_data: dict) -> Products:
   p.dateCreation = product_data["dateCreation", ""]
   p.dateFreeze = product_data["dateFreeze", ""]
   p.dateDefrost = product_data["dateDefrost", ""]
-  p.picture = product_data["picture", ""]
+  p.photos = product_data["photos", ""]
   p.pdf = product_data["pdf", ""]
   p.nbFreeze = product_data["nbFreeze", ""]
   return p
@@ -48,7 +48,7 @@ def to_dict(p: Products) -> dict:
     "dateCreation": p.dateCreation,
     "dateFreeze": p.dateFreeze,
     "dateDefrost": p.dateDefrost,
-    "picture": p.picture,
+    "photos": p.photos,
     "pdf": p.pdf,
     "nbFreeze": p.nbFreeze
   }

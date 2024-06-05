@@ -9,6 +9,7 @@ export function ProductCreate() {
     const [dateFreeze, setDateFreeze] = useState(null);
     const [nbFreeze, setNbFreeze] = useState(null);
     const [designation, setDesignation] = useState(null);
+    const [pdfUrl, setPdfUrl] = useState(null);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -37,6 +38,7 @@ export function ProductCreate() {
         localStorage.removeItem('dateCreation');
         localStorage.removeItem('dateFreeze');
         setAfterSubmit(true);
+        setPdfUrl(response.pdf);
     };
 
     const sendDataToBackend = async (product) => {
@@ -106,6 +108,17 @@ export function ProductCreate() {
                     <button className="" type="submit">Enregistrer</button>
                 </div>
             </form>
+          )}
+           {afterSubmit && pdfUrl && (
+            <div className='mt-8'>
+                <h2>PDF Généré</h2>
+                <iframe 
+                    src={pdfUrl} 
+                    width="600" 
+                    height="800" 
+                    title="PDF"
+                />
+            </div>
           )}
       </div>
     );

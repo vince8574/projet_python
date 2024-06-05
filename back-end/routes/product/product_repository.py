@@ -6,6 +6,8 @@ from config.database import db, bucket
 from .product import Products
 from .product_mapper import to_entity, to_dict
 import cv2
+import firebase_admin
+from firebase_admin import firestore, storage
 
 # Create the class for managing the books collection
 class ProductsRepository:
@@ -196,3 +198,20 @@ class ProductsRepository:
             blob.make_public()
             photo_urls.append(blob.public_url)
         return photo_urls
+    
+    def delete_photo(self, product_id: str, photo_url: str) -> None:
+        try:
+            # Supprimer l'image de Google Cloud Storage
+            blob = self.bucket.blob(photo_url.split("/o/")[1].split("?alt=")[0])
+            blob.delete()
+
+            # Supprimer l'URL de l'image de Firestore
+            docRef = self.collection.document(product_id)
+            docRef.update({
+                'photos': firestore.ArrayRemove([photo_url])
+            })
+
+            print(f"Photo {photo_url} has been deleted from product {product_id}")
+
+        except Exception as e:
+            print(f"An error occurred while deleting the photo: {e}")

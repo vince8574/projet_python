@@ -9,6 +9,6 @@ class ProductResponse(Schema):
   dateCreation = fields.String()
   dateFreeze = fields.String()
   dateDefrost = fields.String()
-  picture = fields.List(fields.String())
+  photos = fields.List(fields.String())
   pdf = fields.String()
   nbFreeze = fields.Integer()

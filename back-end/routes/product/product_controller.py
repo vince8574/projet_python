@@ -41,3 +41,4 @@ class ProductsController(MethodView):
     def put(self, product: dict, id: str):
       product.update({"id": id})
       return product_service.update_product_by_id(toUpdateEntity(product))
+  

@@ -20,3 +20,6 @@ class ProductService:
   
   def update_product_by_id(self, id):
     return self.update_product_by_id(id)
+
+  def delete_photo(self, product_id: str, photo_url: str) -> None:
+    return self.repository.delete_photo(product_id, photo_url)
