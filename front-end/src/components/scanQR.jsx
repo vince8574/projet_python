@@ -24,6 +24,13 @@ export function ScanQR() {
         setAfterSubmit(true);
     }
 
+    const handleDeleteLot = () => {
+        setTotalLot(prevTotalLot => {
+            const newTotalLot = parseInt(prevTotalLot, 10) - 1;
+            return newTotalLot >= 0 ? newTotalLot : 0; // Assurer que le totalLot ne devient pas négatif
+        });
+    }
+
     return (
         <div className='rounded-2xl m-auto w-[80%] bg-cyan-200'> 
             <h1 className="">{afterSubmit ? 'Produit enregistré' : ''}</h1>
@@ -44,14 +51,20 @@ export function ScanQR() {
                         <MyDatePicker selectedDate={selectedDateCreation} setSelectedDate={setSelectedDateCreation} />
                     </div>
                     <div className="flex flex-wrap items-center">
-                        <span className="w-1/4 mb-2">Lot :</span>
+                        <span className="w-1/4 mb-2">Nombre total de lots :</span>
                         <input 
                             type="text" 
-                            className="border border-black border-solid bg-slate-100 w-full" 
+                            className="border border-black border-solid bg-slate-100 w-[20%]" 
                             value={totalLot} 
                             onChange={(e) => setTotalLot(e.target.value)} 
                         />
-                        <button className="mt-4 border border-black border-solid m-auto text-center w-1/3 rounded-full bg-red-600" type="button">Supprimer un lot</button>
+                        <button 
+                            className="mt-4 border border-black border-solid m-auto text-center w-32 h-32 rounded-full bg-red-600" 
+                            type="button"
+                            onClick={handleDeleteLot}
+                        >
+                            Supprimer un lot
+                        </button>
                     </div>
                     <div className='flex flex-wrap items-center'>
                         <span className="w-1/4 mb-2">Congeler le:</span>
@@ -64,25 +77,27 @@ export function ScanQR() {
                 </form>
             )}
             <div>
-                <h2>Photos</h2>
-                {data.photos && data.photos.map((photoUrl, index) => (
-                    <img key={index} src={photoUrl} alt={`Photo ${index}`} width="300" />
-                ))}
+                <h2 className='text-center'>Photos</h2>
+                <div className='flex flex-wrap space-x-4 space-y-4 justify-center'>
+                    {data.photos && data.photos.map((photoUrl, index) => (
+                        <img key={index} src={photoUrl} alt={`Photo ${index}`} width="300" />
+                    ))}
+                </div>
             </div>
             <div>
-                <h2>PDF</h2>
                 {data.pdf && (
                     <iframe 
                         src={data.pdf} 
                         width="600" 
                         height="800" 
                         title="PDF"
+                        className='m-auto mt-4'
                     />
                 )}
             </div>
             {!afterSubmit && (
-                <div className='mt-4'>
-                    <button className="btnSubmit" type="submit" form="myForm">Enregistrer</button>
+                <div className='mt-4 flex'>
+                    <button className='mt-4 border border-black border-solid bg-purple-200 text-center w-1/3 rounded-full m-auto' type="submit" form="myForm">Enregistrer</button>
                 </div>
             )}
         </div>
