@@ -56,6 +56,8 @@ class ProductsRepository:
         
         # Mettre à jour le document Firestore avec l'URL du PDF et les URLs des photos
         self.update_product_by_id(id, {"id": id, "pdf": pdf_url, "photos": photo_urls})
+         # Retourner un dictionnaire contenant l'URL du PDF
+    
     
         return to_entity(docRef)
 

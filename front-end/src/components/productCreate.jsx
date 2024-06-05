@@ -9,7 +9,7 @@ export function ProductCreate() {
     const [dateFreeze, setDateFreeze] = useState(null);
     const [nbFreeze, setNbFreeze] = useState(null);
     const [designation, setDesignation] = useState(null);
-    const [pdfUrl, setPdfUrl] = useState(null);
+    const [pdfUrl, setPdfUrl] = useState(""); // Ajoutez cet état
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -22,7 +22,7 @@ export function ProductCreate() {
 
         const product = {
             designation,
-            totalLot: parseInt(totalLot, 10), // Convertir totalLot en entier
+            totalLot: parseInt(totalLot, 10),
             dateCreation: selectedDate.toISOString().split('T')[0],
             dateFreeze: isFrozen === 'oui' ? selectedDate.toISOString().split('T')[0] : "XXXX-XX-XX",
             nbFreeze: parseInt(nbFreeze, 10),
@@ -32,13 +32,13 @@ export function ProductCreate() {
         localStorage.setItem('selectedDate', selectedDate);
         localStorage.setItem('dateFreeze', product.dateFreeze);
 
-        await sendDataToBackend(product);
+        const response = await sendDataToBackend(product);
         
+
         localStorage.removeItem('totalLot');
         localStorage.removeItem('dateCreation');
         localStorage.removeItem('dateFreeze');
         setAfterSubmit(true);
-        
     };
 
     const sendDataToBackend = async (product) => {
@@ -54,8 +54,9 @@ export function ProductCreate() {
             });
             const data = await response.json();
             console.log('Success:', data);
-            setPdfUrl(data.pdfUrl);
-            return data
+            setPdfUrl(data.pdf); // Mettre à jour l'url du pdf
+            
+            return data;
         } catch (error) {
             console.error('Error:', error);
         }
@@ -112,12 +113,13 @@ export function ProductCreate() {
           )}
            {afterSubmit && pdfUrl && (
             <div className='mt-8'>
-                <h2>PDF Généré</h2>
+                <h2 className='text-center'>Appuyez sur la touche {`>>`} pour imprimer</h2>
                 <iframe 
                     src={pdfUrl} 
                     width="600" 
                     height="800" 
                     title="PDF"
+                    className='m-auto'
                 />
             </div>
           )}
