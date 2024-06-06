@@ -31,8 +31,8 @@ export function ScanQR() {
         localStorage.setItem('totalLot', totalLot);
         localStorage.setItem('selectedDateFreeze', selectedDateFreeze);
         localStorage.setItem('selectedDateDefrost', selectedDateDefrost);
-        
-        await updateProduct(product);
+        id = data.id
+        await updateProduct(product, id);
         
         localStorage.removeItem('totalLot');
         localStorage.removeItem('dateCreation');
@@ -42,7 +42,7 @@ export function ScanQR() {
         setAfterSubmit(true);
     }
     
-    const updateProduct = async (product) => {
+    const updateProduct = async (product, id) => {
         try {
             const response = await fetch('http://localhost:8080/product/scan', {
                 method: 'PUT',
@@ -50,7 +50,7 @@ export function ScanQR() {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                body: JSON.stringify(product)
+                body: JSON.stringify(product, id)
             });
 
             const data = await response.json();
