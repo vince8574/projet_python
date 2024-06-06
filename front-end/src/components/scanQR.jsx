@@ -9,9 +9,9 @@ export function ScanQR() {
     const [afterSubmit, setAfterSubmit] = useState(false);
     const [designation, setDesignation] = useState(localStorage.getItem('designation') || data.designation || '');
     const [totalLot, setTotalLot] = useState(localStorage.getItem('totalLot') || data.totalLot || '');    
-    const [selectedDateFreeze, setSelectedDateFreeze] = useState(localStorage.getItem('selectedDateFreeze') || data.dateFreeze || ""); 
-    const [selectedDateDefrost, setSelectedDateDefrost] = useState(null); 
-    const [selectedDateCreation, setSelectedDateCreation] = useState(localStorage.getItem('selectedDateCreation') || data.dateCreation || ""); 
+    const [selectedDateFreeze, setSelectedDateFreeze] = useState(new Date(localStorage.getItem('selectedDateFreeze') || data.dateFreeze || ""));
+    const [selectedDateDefrost, setSelectedDateDefrost] = useState(new Date(localStorage.getItem('selectedDateDefrost') || data.dateDefrost || ""));
+    const [selectedDateCreation, setSelectedDateCreation] = useState(new Date(localStorage.getItem('selectedDateCreation') || data.dateCreation || ""));
     const [pdfUrl, setPdfUrl] = useState(""); 
 
     
@@ -20,10 +20,10 @@ export function ScanQR() {
         
         const product = {
             designation,
-            totalLot,
-            selectedDateFreeze,
-            selectedDateDefrost,
-            selectedDateCreation,
+            totalLot: parseInt(totalLot, 10),
+            dateCreation: selectedDateCreation.toISOString().split('T')[0],
+            dateFreeze : selectedDateFreeze.toISOString().split('T')[0],
+            dateDefrost : selectedDateDefrost.toISOString().split('T')[0],
             id : data.id
         };
 
@@ -43,14 +43,12 @@ export function ScanQR() {
     }
     
     const updateProduct = async (product) => {
-        
-        
-
         try {
-            const response = await fetch(`/product/scan`, {
+            const response = await fetch('http://localhost:8080/product/scan', {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify(product)
             });
@@ -64,6 +62,7 @@ export function ScanQR() {
             console.error("Error updating product:", error);
         }
     };
+    
     const handleDeleteLot = () => {
         setTotalLot(prevTotalLot => {
             const newTotalLot = parseInt(prevTotalLot, 10) - 1;
@@ -75,7 +74,7 @@ export function ScanQR() {
         <div className='rounded-2xl m-auto w-[80%] bg-cyan-200'> 
             <h1 className="">{afterSubmit ? 'Produit enregistré' : ''}</h1>
             {!afterSubmit && (
-                <form onSubmit={handleSubmit} className="space-y-4 mt-8">
+                <form onSubmit={handleSubmit} id="myForm" className="space-y-4 mt-8">
                     <div>
                         <label htmlFor="description" className="block text-center">Description</label>
                         <input 
@@ -114,6 +113,9 @@ export function ScanQR() {
                         <span className="w-1/4 mb-2">Décongeler le:</span>
                         <MyDatePicker selectedDate={selectedDateDefrost} setSelectedDate={setSelectedDateDefrost} />
                     </div>         
+                    <div className='mt-4 flex'>
+                        <button className='mt-4 border border-black border-solid bg-purple-200 text-center w-1/3 rounded-full m-auto' type="submit">Enregistrer</button>
+                    </div>
                 </form>
             )}
             <div>
@@ -135,11 +137,6 @@ export function ScanQR() {
                     />
                 )}
             </div>
-            {!afterSubmit && (
-                <div className='mt-4 flex'>
-                    <button className='mt-4 border border-black border-solid bg-purple-200 text-center w-1/3 rounded-full m-auto' type="submit" form="myForm">Enregistrer</button>
-                </div>
-            )}
             {afterSubmit && pdfUrl && (
             <div className='mt-8'>
                 <h2 className='text-center'>Appuyez sur la touche {`>>`} pour imprimer</h2>
