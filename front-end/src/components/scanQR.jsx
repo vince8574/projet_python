@@ -12,18 +12,58 @@ export function ScanQR() {
     const [selectedDateFreeze, setSelectedDateFreeze] = useState(localStorage.getItem('selectedDateFreeze') || data.dateFreeze || ""); 
     const [selectedDateDefrost, setSelectedDateDefrost] = useState(null); 
     const [selectedDateCreation, setSelectedDateCreation] = useState(localStorage.getItem('selectedDateCreation') || data.dateCreation || ""); 
+    const [pdfUrl, setPdfUrl] = useState(""); 
 
-    const handleSubmit = (event) => {
+    
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        
+        const product = {
+            designation,
+            totalLot,
+            selectedDateFreeze,
+            selectedDateDefrost,
+            selectedDateCreation,
+            id : data.id
+        };
 
         localStorage.setItem('designation', designation);
         localStorage.setItem('totalLot', totalLot);
         localStorage.setItem('selectedDateFreeze', selectedDateFreeze);
         localStorage.setItem('selectedDateDefrost', selectedDateDefrost);
-
+        
+        await updateProduct(product);
+        
+        localStorage.removeItem('totalLot');
+        localStorage.removeItem('dateCreation');
+        localStorage.removeItem('dateFreeze');
+        localStorage.removeItem('dateDefrost')
+        
         setAfterSubmit(true);
     }
+    
+    const updateProduct = async (product) => {
+        
+        
 
+        try {
+            const response = await fetch(`/product/scan`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(product)
+            });
+
+            const data = await response.json();
+            console.log('Success:', data);
+            setPdfUrl(data.pdf); // Mettre à jour l'url du pdf
+            
+            return data;
+        } catch (error) {
+            console.error("Error updating product:", error);
+        }
+    };
     const handleDeleteLot = () => {
         setTotalLot(prevTotalLot => {
             const newTotalLot = parseInt(prevTotalLot, 10) - 1;
@@ -100,6 +140,18 @@ export function ScanQR() {
                     <button className='mt-4 border border-black border-solid bg-purple-200 text-center w-1/3 rounded-full m-auto' type="submit" form="myForm">Enregistrer</button>
                 </div>
             )}
+            {afterSubmit && pdfUrl && (
+            <div className='mt-8'>
+                <h2 className='text-center'>Appuyez sur la touche {`>>`} pour imprimer</h2>
+                <iframe 
+                    src={pdfUrl} 
+                    width="600" 
+                    height="800" 
+                    title="PDF"
+                    className='m-auto'
+                />
+            </div>
+          )}
         </div>
     );
 }

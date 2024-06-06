@@ -9,7 +9,7 @@ export function ProductCreate() {
     const [dateFreeze, setDateFreeze] = useState(null);
     const [nbFreeze, setNbFreeze] = useState(null);
     const [designation, setDesignation] = useState(null);
-    const [pdfUrl, setPdfUrl] = useState(""); // Ajoutez cet état
+    const [pdfUrl, setPdfUrl] = useState(""); 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -32,7 +32,7 @@ export function ProductCreate() {
         localStorage.setItem('selectedDate', selectedDate);
         localStorage.setItem('dateFreeze', product.dateFreeze);
 
-        const response = await sendDataToBackend(product);
+        await sendDataToBackend(product);
         
 
         localStorage.removeItem('totalLot');
