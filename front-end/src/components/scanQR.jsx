@@ -114,7 +114,7 @@ export function ScanQR() {
                         <MyDatePicker selectedDate={selectedDateDefrost} setSelectedDate={setSelectedDateDefrost} />
                     </div>         
                     <div className='mt-4 flex'>
-                        <button className='mt-4 border border-black border-solid bg-purple-200 text-center w-1/3 rounded-full m-auto' type="submit">Enregistrer</button>
+                        <button className='mt-4 border border-black border-solid bg-green-300 text-center w-1/3 rounded-full m-auto w-32 h-32' type="submit">Enregistrer</button>
                     </div>
                 </form>
             )}
