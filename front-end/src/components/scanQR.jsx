@@ -34,6 +34,7 @@ export function ScanQR() {
         id = data.id
         await updateProduct(product, id);
         
+        localStorage.removeItem('designation')
         localStorage.removeItem('totalLot');
         localStorage.removeItem('dateCreation');
         localStorage.removeItem('dateFreeze');

@@ -88,22 +88,8 @@ class ProductsRepository:
             print(f"An error occurred: {e}")
 
     def update_product_by_id(self, id: str, data: dict) -> dict:
-        pdf = self.pdf_maker(id, data.designation, data.dateCreation, data.dateFreeze, data.dateDefrost)
         
-        # Définir le chemin dans Firebase Storage
-        blob = self.bucket.blob(f'pdfs/{id}.pdf')
-
-        # Charger les données PDF dans Firebase Storage
-        blob.upload_from_file(pdf, content_type='application/pdf', predefined_acl='publicRead')
-        # predefined_acl='publicRead rend le fichier accessible au public en lecture seule. 
-
-        # Rendre le blob publiquement accessible (optionnel)
-        blob.make_public()
-
-        # Obtenir l'URL du fichier chargé
-        pdf_url = blob.public_url
-        print(f'PDF URL: {pdf_url}')
-        data.pdf = pdf_url
+        
         
         try:
             docRef = self.collection.document(id)
