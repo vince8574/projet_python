@@ -1,57 +1,47 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import MyDatePicker from './datePicker';
 
 export function ScanQR() {
     const location = useLocation();
     const data = location.state?.data || {};
 
     const [afterSubmit, setAfterSubmit] = useState(false);
-    const [designation, setDesignation] = useState(localStorage.getItem('designation') || data.designation || '');
-    const [totalLot, setTotalLot] = useState(localStorage.getItem('totalLot') || data.totalLot || '');    
-    const [selectedDateFreeze, setSelectedDateFreeze] = useState(new Date(localStorage.getItem('selectedDateFreeze') || data.dateFreeze || ""));
-    const [selectedDateDefrost, setSelectedDateDefrost] = useState(new Date(localStorage.getItem('selectedDateDefrost') || data.dateDefrost || ""));
-    const [selectedDateCreation, setSelectedDateCreation] = useState(new Date(localStorage.getItem('selectedDateCreation') || data.dateCreation || ""));
+    const [designation, setDesignation] = useState(data.designation || '');
+    const [totalLot, setTotalLot] = useState(data.totalLot || '');    
+    const [selectedDateFreeze, setSelectedDateFreeze] = useState(data.dateFreeze || "");
+    const [selectedDateDefrost, setSelectedDateDefrost] = useState(data.dateDefrost || "");
     const [pdfUrl, setPdfUrl] = useState(""); 
 
-    
     const handleSubmit = async (event) => {
         event.preventDefault();
         
         const product = {
             designation,
             totalLot: parseInt(totalLot, 10),
-            dateCreation: selectedDateCreation.toISOString().split('T')[0],
-            dateFreeze : selectedDateFreeze.toISOString().split('T')[0],
-            dateDefrost : selectedDateDefrost.toISOString().split('T')[0],
-            id : data.id
+            dateCreation: data.dateCreation,
+            dateFreeze: selectedDateFreeze,
+            dateDefrost: selectedDateDefrost,
+            id: data.id
         };
 
-        localStorage.setItem('designation', designation);
-        localStorage.setItem('totalLot', totalLot);
-        localStorage.setItem('selectedDateFreeze', selectedDateFreeze);
-        localStorage.setItem('selectedDateDefrost', selectedDateDefrost);
-        id = data.id
-        await updateProduct(product, id);
+        console.log("tu as appuyer sur enregistrer")
         
-        localStorage.removeItem('designation')
-        localStorage.removeItem('totalLot');
-        localStorage.removeItem('dateCreation');
-        localStorage.removeItem('dateFreeze');
-        localStorage.removeItem('dateDefrost')
+        await updateProduct(data.id, product);
+        
+        
         
         setAfterSubmit(true);
-    }
+    };
     
-    const updateProduct = async (product, id) => {
+    const updateProduct = async (id, product) => {
         try {
-            const response = await fetch('http://localhost:8080/product/scan', {
+            const response = await fetch(`http://localhost:8080/product/update`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                body: JSON.stringify(product, id)
+                body: JSON.stringify(product)
             });
 
             const data = await response.json();
@@ -69,7 +59,18 @@ export function ScanQR() {
             const newTotalLot = parseInt(prevTotalLot, 10) - 1;
             return newTotalLot >= 0 ? newTotalLot : 0; // Assurer que le totalLot ne devient pas négatif
         });
-    }
+    };
+
+    const handleFreeze = () => {
+        const currentDate = new Date().toISOString().split('T')[0];
+        console.log(currentDate)
+        setSelectedDateFreeze(currentDate);
+    };
+
+    const handleDefrost = () => {
+        const currentDate = new Date().toISOString().split('T')[0];
+        setSelectedDateDefrost(currentDate);
+    };
 
     return (
         <div className='rounded-2xl m-auto w-[80%] bg-cyan-200'> 
@@ -88,7 +89,7 @@ export function ScanQR() {
                     </div>
                     <div className='flex flex-wrap items-center'>
                         <span className="w-1/4 mb-2 mr-4">Produit le:</span>
-                        <MyDatePicker selectedDate={selectedDateCreation} setSelectedDate={setSelectedDateCreation} />
+                        <label className="w-1/4 mb-2 mr-4">{data.dateCreation}</label>
                     </div>
                     <div className="flex flex-wrap items-center">
                         <span className="w-1/4 mb-2">Nombre total de lots :</span>
@@ -108,12 +109,30 @@ export function ScanQR() {
                     </div>
                     <div className='flex flex-wrap items-center'>
                         <span className="w-1/4 mb-2">Congeler le:</span>
-                        <MyDatePicker selectedDate={selectedDateFreeze} setSelectedDate={setSelectedDateFreeze} />
+                        {data.dateFreeze ? (
+                            <label className="w-1/4 mb-2 mr-4">{selectedDateFreeze}</label>
+                        ) : (
+                            <button 
+                                className="mt-4 border border-black border-solid m-auto text-center w-32 h-32 rounded-full bg-blue-600" 
+                                type="button"
+                                onClick={handleFreeze}
+                            >
+                                Congeler
+                            </button>
+                        )}
                     </div>
-                    <div className='flex flex-wrap items-center'>
-                        <span className="w-1/4 mb-2">Décongeler le:</span>
-                        <MyDatePicker selectedDate={selectedDateDefrost} setSelectedDate={setSelectedDateDefrost} />
-                    </div>         
+                    {data.dateFreeze && (
+                        <div className='flex flex-wrap items-center'>
+                            <span className="w-1/4 mb-2">Décongeler le: {selectedDateDefrost}</span>
+                            <button 
+                                className="mt-4 border border-black border-solid m-auto text-center w-32 h-32 rounded-full bg-yellow-600" 
+                                type="button"
+                                onClick={handleDefrost}
+                            >
+                                Décongeler
+                            </button>
+                        </div>
+                    )}        
                     <div className='mt-4 flex'>
                         <button className='mt-4 border border-black border-solid bg-green-300 text-center w-1/3 rounded-full m-auto w-32 h-32' type="submit">Enregistrer</button>
                     </div>
@@ -130,7 +149,7 @@ export function ScanQR() {
             <div>
                 {data.pdf && (
                     <iframe 
-                        src={data.pdf} 
+                        src={data.historique} 
                         width="600" 
                         height="800" 
                         title="PDF"

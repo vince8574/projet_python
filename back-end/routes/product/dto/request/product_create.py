@@ -2,6 +2,7 @@ from marshmallow import Schema, fields
 
 class CreateProduct(Schema):
   id = fields.String()
+  ref = fields.String()
   designation = fields.String()
   numLot = fields.Integer()
   totalLot = fields.Integer()
@@ -10,4 +11,5 @@ class CreateProduct(Schema):
   dateDefrost = fields.String()
   photos = fields.List(fields.String())
   pdf = fields.String()
+  historique = fields.String()
   nbFreeze = fields.Integer()

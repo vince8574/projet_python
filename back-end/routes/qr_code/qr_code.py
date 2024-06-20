@@ -7,10 +7,10 @@ class QrCode:
     def __init__(self):
         pass
     
-    def generate(self, id:str ="", numLot:str=""):
+    def generate(self, ref:str =""):
         
         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
-        qr.add_data(f'{id}')
+        qr.add_data(f'{ref}')
         qr.make(fit=True)
         qr_img = qr.make_image(fill_color="black", back_color="white")
         qr_img.save("qr_code3.png")
@@ -31,7 +31,7 @@ class QrCode:
 
             for i in decode(frame):
                 
-                id=i.data.decode('utf-8')
+                ref=i.data.decode('utf-8')
                 camera=False
                 break
 
@@ -43,5 +43,5 @@ class QrCode:
 
         cam.release()
         cv2.destroyAllWindows()
-        print(id)
-        return id
+        print(ref)
+        return ref

@@ -16,10 +16,12 @@ class ProductService:
     return self.repository.get_product_by_id()
   
   def delete_product_by_id(self, id):
-    return self.delete_product_by_id(id)
+    return self.repository.delete_product_by_id(id)
   
-  def update_product_by_id(self, id):
-    return self.update_product_by_id(id)
+  def update_product_by_id(self, data):
+    return self.repository.update_product_by_id(data)
 
   def delete_photo(self, product_id: str, photo_url: str) -> None:
     return self.repository.delete_photo(product_id, photo_url)
+  
+  

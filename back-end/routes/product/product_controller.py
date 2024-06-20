@@ -31,14 +31,27 @@ class ProductsController(MethodView):
     def get(self):
       return product_service.get_product_by_id()
     
+    
+
+  
+  @product.route("/update")
+  class SingleUserController(MethodView):
+    @product.response(status_code=200, schema=ProductResponse)
+    def get(self, id: str):
+      return product_service.get_one(id)
+  
     @product.response(status_code=204)
     def delete(self, id: str):
-      product_service.delete_product_by_id(id)
+      product_service.delete_user_by_id(id)
       return None
-    
+
     @product.arguments(UpdateProduct)
     @product.response(status_code=200, schema=ProductResponse)
-    def put(self, product: dict, id: str):
+    def put(self, product: dict):
+      print("PUT product", product)
+      id = product["id"]
+      print(f"l'id est : {id}")
       product.update({"id": id})
-      return product_service.update_product_by_id(toUpdateEntity(product))
-  
+      return product_service.update_product_by_id(product)
+
+ 
