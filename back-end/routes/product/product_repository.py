@@ -9,7 +9,7 @@ from .product import Products
 from .product_mapper import to_entity, to_dict
 import cv2
 from firebase_admin import firestore, storage
-from PyPDF2 import PdfMerger
+from PyPDF2 import PdfReader, PdfWriter
 
 class ProductsRepository:
     def __init__(self):
@@ -66,69 +66,105 @@ class ProductsRepository:
             
             new_pdf = self.pdf_maker(existing_data['ref'], data['designation'], data['dateCreation'], data['dateFreeze'], data['dateDefrost'])
             historique_url = existing_data.get('historique')
+        
             print(f"historique_url: {historique_url}")
             
             if historique_url:
                 try:
                     print("Je suis rentré dans la boucle")
-                    parts = historique_url.split("/o/")
-                    print(f"URL parts: {parts}")
                     
-                    if len(parts) < 2:
-                        raise ValueError("Invalid URL format")
-                    
-                    blob_path = parts[1].split("?alt=")[0]
+                    # Extract the blob path correctly
+                    blob_path = historique_url.split(self.bucket.name + "/")[1]
                     print(f"Blob path: {blob_path}")
-                    
+
                     historique_blob = self.bucket.blob(blob_path)
                     print(f"Blob exists: {historique_blob.exists()}")
-                    
-                    historique_pdf = BytesIO()
-                    historique_blob.download_to_file(historique_pdf)
-                    historique_pdf.seek(0)
-                    print("Historique PDF téléchargé avec succès")
 
-                    merged_pdf = self.merge_pdfs(historique_pdf, new_pdf)
-                    print(f"Merged PDF: {merged_pdf}")
-                    
-                    unique_hist_filename = generate_unique_filename(f"{existing_data['ref']}_hist")
-                    new_hist_url = self.upload_file_to_storage(merged_pdf, unique_hist_filename)
-                    print(f"New Hist URL: {new_hist_url}")
-                    
-                    data['historique'] = new_hist_url
-                    print(f"data['historique']: {data['historique']}")
+                    if historique_blob.exists():
+                        # Télécharger le PDF historique existant
+                        historique_pdf = BytesIO()
+                        historique_blob.download_to_file(historique_pdf)
+                        historique_pdf.seek(0)
+                        print("Historique PDF téléchargé avec succès")
+
+                        # Fusionner le PDF historique avec le nouveau PDF
+                        merged_pdf = self.merge_pdfs(historique_pdf, new_pdf)
+                        print(f"Merged PDF: {merged_pdf}")
+
+                        # Supprimer l'ancien PDF historique
+                        historique_blob.delete()
+                        print("Ancien PDF historique supprimé avec succès")
+
+                        # Télécharger le nouveau PDF fusionné
+                        merged_pdf.seek(0)  # Assurez-vous que le flux est à la position de départ
+
+                        # Charger le nouveau PDF fusionné dans le stockage
+                        unique_hist_filename = generate_unique_filename(f"{existing_data['ref']}_hist")
+                        new_hist_url = self.upload_file_to_storage(merged_pdf, unique_hist_filename)
+                        print(f"New Hist URL: {new_hist_url}")
+
+                        # Mettre à jour l'URL du PDF historique dans les données à mettre à jour
+                        data['historique'] = new_hist_url
+                        print(f"data['historique']: {data['historique']}")
+
+                    else:
+                        print("Historique blob does not exist")
+                        data['historique'] = historique_url
+                
                 except Exception as e:
                     print(f"An error occurred while processing the historique PDF: {e}")
                     data['historique'] = historique_url
             
+            # Générer un nom de fichier unique pour le nouveau PDF principal
             unique_pdf_filename = generate_unique_filename(existing_data['ref'])
+            new_pdf.seek(0)  # Assurez-vous que le flux est à la position de départ
             new_pdf_url = self.upload_file_to_storage(new_pdf, unique_pdf_filename)
             data['pdf'] = new_pdf_url
             
             print("Data to update:", data)
+            
+            # Mettre à jour les données du produit dans la base de données
             docRef.update(data)
+            
+            # Récupérer et retourner les données mises à jour
             updated_doc = docRef.get()
             return updated_doc.to_dict()
+        
+        except ValueError as ve:
+            print(f"ValueError occurred: {ve}")
+            # Gérer l'erreur de format d'URL spécifiquement ici
+            return None
+        
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
 
-    def merge_pdfs(self, existing_pdf, new_pdf):
-        print("Merging PDFs")
-        try:
-            merger = PdfMerger()
-            merger.append(existing_pdf)
-            merger.append(new_pdf)
-            print("PDFs appended successfully")
-            
-            merged_pdf = BytesIO()
-            merger.write(merged_pdf)
-            merged_pdf.seek(0)
-            print("PDFs merged successfully")
-            return merged_pdf
-        except Exception as e:
-            print(f"An error occurred while merging PDFs: {e}")
-            raise e
+
+
+
+    def merge_pdfs(self, historique_pdf: BytesIO, new_pdf: BytesIO) -> BytesIO:
+        # Créer un PdfWriter
+        writer = PdfWriter()
+
+        # Lire le contenu du PDF historique
+        historique_reader = PdfReader(historique_pdf)
+        for page_num in range(len(historique_reader.pages)):
+            writer.add_page(historique_reader.pages[page_num])
+        
+        # Lire le contenu du nouveau PDF
+        new_reader = PdfReader(new_pdf)
+        for page_num in range(len(new_reader.pages)):
+            writer.add_page(new_reader.pages[page_num])
+
+        # Créer un buffer pour le PDF fusionné
+        merged_pdf = BytesIO()
+        writer.write(merged_pdf)
+
+        # Revenir au début du buffer pour la lecture future
+        merged_pdf.seek(0)
+
+        return merged_pdf
+
 
     def pdf_maker(self, ref, designation, dateCreation, dateFreeze, dateDefrost):
         pdf = FPDF("P", "mm", "Letter")

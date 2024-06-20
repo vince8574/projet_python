@@ -24,11 +24,7 @@ export function ScanQR() {
             id: data.id
         };
 
-        console.log("tu as appuyer sur enregistrer")
-        
         await updateProduct(data.id, product);
-        
-        
         
         setAfterSubmit(true);
     };
@@ -63,7 +59,6 @@ export function ScanQR() {
 
     const handleFreeze = () => {
         const currentDate = new Date().toISOString().split('T')[0];
-        console.log(currentDate)
         setSelectedDateFreeze(currentDate);
     };
 
@@ -108,9 +103,9 @@ export function ScanQR() {
                         </button>
                     </div>
                     <div className='flex flex-wrap items-center'>
-                        <span className="w-1/4 mb-2">Congeler le:</span>
+                        <span className="w-1/4 mb-2">Congeler le: {selectedDateFreeze}</span>
                         {data.dateFreeze ? (
-                            <label className="w-1/4 mb-2 mr-4">{selectedDateFreeze}</label>
+                            <label className="w-1/4 mb-2 mr-4"></label>
                         ) : (
                             <button 
                                 className="mt-4 border border-black border-solid m-auto text-center w-32 h-32 rounded-full bg-blue-600" 

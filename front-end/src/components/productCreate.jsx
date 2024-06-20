@@ -7,7 +7,7 @@ export function ProductCreate() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [isFrozen, setIsFrozen] = useState(null);
     const [dateFreeze, setDateFreeze] = useState(null);
-    const [nbFreeze, setNbFreeze] = useState(null);
+    const [nbFreeze, setNbFreeze] = useState(0);
     const [designation, setDesignation] = useState(null);
     const [pdfUrl, setPdfUrl] = useState(""); 
 
