@@ -96,7 +96,7 @@ class ProductsRepository:
                         print("Ancien PDF historique supprimé avec succès")
 
                         # Télécharger le nouveau PDF fusionné
-                        merged_pdf.seek(0)  # Assurez-vous que le flux est à la position de départ
+                        merged_pdf.seek(0)  # S'assurer que le flux est à la position de départ
 
                         # Charger le nouveau PDF fusionné dans le stockage
                         unique_hist_filename = generate_unique_filename(f"{existing_data['ref']}_hist")
@@ -117,7 +117,7 @@ class ProductsRepository:
             
             # Générer un nom de fichier unique pour le nouveau PDF principal
             unique_pdf_filename = generate_unique_filename(existing_data['ref'])
-            new_pdf.seek(0)  # Assurez-vous que le flux est à la position de départ
+            new_pdf.seek(0)  # S'assurer que le flux est à la position de départ
             new_pdf_url = self.upload_file_to_storage(new_pdf, unique_pdf_filename)
             data['pdf'] = new_pdf_url
             
