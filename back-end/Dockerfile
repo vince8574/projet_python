@@ -1,5 +1,5 @@
 # Utilisez une image de base Python
-FROM python:3.11
+FROM python:3.10.14
 
 # Définissez le répertoire de travail dans le conteneur
 WORKDIR /back-end
@@ -8,6 +8,9 @@ WORKDIR /back-end
 COPY requirements.txt .
 
 # Installez les dépendances
+RUN apt-get update && apt-get install -y python3
+
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiez le reste du code de l'application
