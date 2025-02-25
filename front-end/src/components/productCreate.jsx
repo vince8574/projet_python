@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import MyDatePicker from './datePicker';
+import PdfViewer from './pdfviewer';
 
 export function ProductCreate() {
     const [afterSubmit, setAfterSubmit] = useState(false);
@@ -115,13 +116,23 @@ export function ProductCreate() {
             {afterSubmit && pdfUrl && (
                 <div className='mt-8'>
                     <h2 className='text-center'>Appuyez sur la touche {`>>`} pour imprimer</h2>
-                    <iframe 
+                    <PdfViewer pdfUrl={pdfUrl} />
+                    {/* <iframe 
                         src={pdfUrl} 
                         width="600" 
                         height="800" 
                         title="PDF"
                         className='m-auto'
-                    />
+                        type="application/pdf"
+                       
+                    /> */}
+                    {/* <iframe 
+                        src="https://docs.google.com/gview?url={pdfUrl}"
+                        width="600"
+                        height="800"
+                        title="PDF"
+                    /> */}
+
                 </div>
             )}
         </div>
