@@ -31,15 +31,24 @@ export function Introduction() {
 
     return (
         <>
-            <div className='bg-teal-100 min-h-screen flex flex-col'>
-                <h1 className="size-full text-center">Faites votre choix</h1>
-                <div className="pb-8 mt-8 flex size-full justify-around">
-                    <button onClick={handleProduct} className='rounded-full w-64 h-64 bg-lime-200'>Nouveau produit</button>
-                    <button onClick={handleScanner} className='rounded-full w-64 h-64 bg-pink-700'>Scanner QRCODE</button>
-                </div>
+          <div className=" flex flex-col justify-center items-center">
+            <div className="flex justify-center gap-8">
+              <button
+                onClick={handleProduct}
+                className="rounded-full w-64 h-64 bg-lime-200 flex items-center justify-center"
+              >
+                Nouveau produit
+              </button>
+              <button
+                onClick={handleScanner}
+                className="rounded-full w-64 h-64 bg-pink-700 flex items-center justify-center"
+              >
+                Scanner QRCODE
+              </button>
             </div>
+          </div>
         </>
-    );
+      );
 }
 
 export default Introduction;
