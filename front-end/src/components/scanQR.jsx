@@ -186,14 +186,14 @@ const ScanQR = () => {
                 <h2 className='text-center'>Photos</h2>
                 <div className='flex flex-wrap space-x-4 space-y-4 justify-center'>
                     {data.photos && data.photos.map((photoUrl, index) => (
-                        <img key={index} src={photoUrl} alt={`Photo ${index}`} width="300" />
+                        <img key={index} src={photoUrl} alt={`Photo ${index}`} className='max-w-[300px]' />
                     ))}
                 </div>
             </div>
 
             {afterSubmit && pdfUrl && (
                 <div className='mt-8'>
-                    <h2 className='text-center'>Appuyez sur la touche {`>>`} pour imprimer</h2>
+                    
                     <iframe 
                         src={pdfUrl} 
                         width="600" 
