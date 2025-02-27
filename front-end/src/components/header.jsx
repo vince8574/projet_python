@@ -16,7 +16,7 @@ const Header = () => {
             </Link>
           </li>
           <li>
-            <p className="text-center px-4 font-poppins font-bold text-[48px]">Save Food</p>
+            <p className="text-center px-4 font-poppins font-bold text-3xl">Save Food</p>
           </li>
           <li>
             <Link to="/apropos">

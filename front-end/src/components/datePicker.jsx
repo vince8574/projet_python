@@ -2,7 +2,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import fr from 'date-fns/locale/fr';
 
-export function MyDatePicker({selectedDate, setSelectedDate}) {
+const MyDatePicker = ({selectedDate, setSelectedDate}) => {
   
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -12,12 +12,12 @@ export function MyDatePicker({selectedDate, setSelectedDate}) {
     <div>
           
       <DatePicker
-        className=' bg-slate-100 w-[80%] m-auto'
+        className='flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400'
         locale={fr}
         selected={selectedDate}
         value={selectedDate}
         onChange={handleDateChange}
-        dateFormat="yyyy-MM-dd"
+        dateFormat="dd/MM/yyyy"
         isClearable
         placeholderText="Sélectionnez une date"
         

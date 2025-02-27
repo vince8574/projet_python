@@ -4,6 +4,7 @@ import ScanQR from "./components/scanQR";
 import Introduction from "./components/introduction";
 import Footer from "./components/footer";
 import Header from "./components/header";
+import Apropos from "./components/aPropos";
 
 
 
@@ -20,7 +21,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Introduction />} />
             <Route path="/product" element={<ProductCreate />} />
-            <Route path="/scan" element={<ScanQR />} />            
+            <Route path="/scan" element={<ScanQR />} /> 
+            <Route path="/apropos" element={<Apropos />} />        
           </Routes>
         </div>
         <Footer className="w-full mt-auto"/>
