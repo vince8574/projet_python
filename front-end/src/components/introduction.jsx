@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
+import scan from '../assets/scan-ico.png';
+import newProduct from '../assets/edit_document.svg';
 
-export function Introduction() {
+const Introduction = () => {
     const navigate = useNavigate();
 
     const sendDataToBackend = async () => {
@@ -31,24 +33,25 @@ export function Introduction() {
 
     return (
         <>
-          <div className=" flex flex-col justify-center items-center">
-            <div className="flex justify-center gap-8">
+          <div className=" flex flex-col justify-center items-center w-full">
+            <div className="flex justify-around items-center w-full">
               <button
                 onClick={handleProduct}
-                className="rounded-full w-64 h-64 bg-lime-200 flex items-center justify-center"
+                className="flex flex-col rounded-[15px] items-center justify-center bg-new-product"
               >
+                <img src={newProduct} alt="nouveau produit" className="h-[250px]"/>
                 Nouveau produit
               </button>
               <button
                 onClick={handleScanner}
-                className="rounded-full w-64 h-64 bg-pink-700 flex items-center justify-center"
+                className="flex flex-col items-center justify-center rounded-[15px] bg-scanner"
               >
-                Scanner QRCODE
+                <img src={scan} alt="scanner" className="w-auto h-[250px]"/>
+                Scanner
               </button>
             </div>
           </div>
-        </>
-      );
+  </>
+    );
 }
-
 export default Introduction;

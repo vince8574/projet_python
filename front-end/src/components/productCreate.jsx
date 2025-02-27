@@ -116,8 +116,8 @@ export function ProductCreate() {
             {afterSubmit && pdfUrl && (
                 <div className='mt-8'>
                     <h2 className='text-center'>Appuyez sur la touche {`>>`} pour imprimer</h2>
-                    <PdfViewer pdfUrl={pdfUrl} />
-                    {/* <iframe 
+                    {/* <PdfViewer pdfUrl={pdfUrl} /> */}
+                    <iframe 
                         src={pdfUrl} 
                         width="600" 
                         height="800" 
@@ -125,7 +125,7 @@ export function ProductCreate() {
                         className='m-auto'
                         type="application/pdf"
                        
-                    /> */}
+                    />
                     {/* <iframe 
                         src="https://docs.google.com/gview?url={pdfUrl}"
                         width="600"

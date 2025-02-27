@@ -16,7 +16,7 @@ function App() {
       <Router>
         <div className="min-h-screen bg-body flex flex-col justify-center items-center">
           <Header className="w-full"/>
-          <div  className="flex flex-col justify-center items-center px-4 md:px-16 lg:px-32 xl:px-64 flex-grow mb-16" id="root">
+          <div  className="flex flex-col justify-center items-center px-4 md:px-16 lg:px-32 xl:px-64 flex-grow mb-16 w-full" id="root">
           <Routes>
             <Route path="/" element={<Introduction />} />
             <Route path="/product" element={<ProductCreate />} />
