@@ -24,4 +24,7 @@ class ProductService:
   def delete_photo(self, product_id: str, photo_url: str) -> None:
     return self.repository.delete_photo(product_id, photo_url)
   
+  def create_product_with_photos(self, p: Products, photo_paths: list) -> Products:
+    return self.repository.create_product_with_photos(p, photo_paths)
+  
   

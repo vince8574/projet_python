@@ -10,6 +10,7 @@ from .product_mapper import to_entity, to_dict
 import cv2
 from firebase_admin import firestore, storage
 from PyPDF2 import PdfReader, PdfWriter
+import base64
 
 class ProductsRepository:
     def __init__(self):
@@ -262,5 +263,112 @@ class ProductsRepository:
         except Exception as e:
             print(f"An error occurred while deleting the photo: {e}")
 
+    def create_product_with_photos(self, p: Products, photo_paths: list) -> Products:
+        """Crée un produit avec des photos fournies par l'utilisateur"""
+        p.ref = hashlib.sha256((p.designation).encode("utf-8")).hexdigest()
+        
+        # Télécharger les photos
+        if photo_paths:
+            photo_urls = self.upload_files_to_storage(photo_paths, p.ref)
+        else:
+            photo_urls = []
+        
+        # Générer le PDF
+        pdf = self.pdf_maker(p.ref, p.designation, p.dateCreation, p.dateFreeze, p.dateDefrost)
+        pdf_url = self.upload_file_to_storage(pdf, f"{p.ref}.pdf")
+        
+        # Créer un PDF historique
+        pdf_hist = self.pdf_maker(p.ref, p.designation, p.dateCreation, p.dateFreeze, p.dateDefrost)
+        pdf_url2 = self.upload_file_to_storage(pdf_hist, f"{p.ref}_hist.pdf")
+        
+        # Mettre à jour les attributs du produit
+        p.photos = photo_urls
+        p.pdf = pdf_url
+        p.historique = pdf_url2
+        
+        # Enregistrer dans Firestore
+        _, docRef = self.collection.add(to_dict(p))
+        return to_entity(docRef)
+
+    def upload_photos_from_base64(self, base64_images: list, prefix: str) -> list:
+        """Télécharge des images encodées en base64 vers le stockage"""
+        urls = []
+        
+        for i, base64_img in enumerate(base64_images):
+            # Extraire les données base64 (supprimer le préfixe data:image/png;base64,)
+            if ',' in base64_img:
+                base64_data = base64_img.split(',')[1]
+            else:
+                base64_data = base64_img
+            
+            # Décoder les données base64
+            image_data = base64.b64decode(base64_data)
+            file_stream = BytesIO(image_data)
+            
+            # Télécharger sur Firebase Storage
+            file_name = f"{prefix}_photo_{i}.png"
+            blob = self.bucket.blob(file_name)
+            blob.upload_from_file(file_stream, content_type='image/png')
+            blob.make_public()
+            
+            urls.append(blob.public_url)
+        
+        return urls
+
+    def create_product_with_photos(self, p: Products, photo_paths: list) -> Products:
+        """Creates a product with photos provided by the user"""
+        # Create hash reference for the product
+        p.ref = hashlib.sha256((p.designation).encode("utf-8")).hexdigest()
+        
+        # Upload the photos
+        if photo_paths:
+            photo_urls = self.upload_files_to_storage(photo_paths, p.ref)
+        else:
+            photo_urls = []
+        
+        # Generate the PDF
+        pdf = self.pdf_maker(p.ref, p.designation, p.dateCreation, p.dateFreeze, p.dateDefrost)
+        pdf_url = self.upload_file_to_storage(pdf, f"{p.ref}.pdf")
+        
+        # Create a history PDF
+        pdf_hist = self.pdf_maker(p.ref, p.designation, p.dateCreation, p.dateFreeze, p.dateDefrost)
+        pdf_url2 = self.upload_file_to_storage(pdf_hist, f"{p.ref}_hist.pdf")
+        
+        # Update the product attributes
+        p.photos = photo_urls
+        p.pdf = pdf_url
+        p.historique = pdf_url2
+        
+        # Save to Firestore and return
+        _, docRef = self.collection.add(to_dict(p))
+        return to_entity(docRef)
+
+    def upload_photos_from_base64(self, base64_images: list, prefix: str) -> list:
+            """Uploads base64 encoded images to storage"""
+            urls = []
+            
+            for i, base64_img in enumerate(base64_images):
+                # Extract base64 data (remove data:image/png;base64, prefix)
+                if ',' in base64_img:
+                    base64_data = base64_img.split(',')[1]
+                else:
+                    base64_data = base64_img
+                
+                # Decode base64 data
+                image_data = base64.b64decode(base64_data)
+                file_stream = BytesIO(image_data)
+                
+                # Upload to Firebase Storage
+                file_name = f"{prefix}_photo_{i}.png"
+                blob = self.bucket.blob(file_name)
+                blob.upload_from_file(file_stream, content_type='image/png')
+                blob.make_public()
+                
+                urls.append(blob.public_url)
+            
+            return urls
+
 def generate_unique_filename(prefix):
-    return f"{prefix}_{uuid.uuid4().hex}.pdf"
+        return f"{prefix}_{uuid.uuid4().hex}.pdf"
+
+    

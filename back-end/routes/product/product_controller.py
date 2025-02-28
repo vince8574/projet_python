@@ -1,11 +1,16 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint
-
+from .product import Products
 from .product_service import ProductService
 from .dto.response.product_response import ProductResponse
 from .dto.request.product_create import CreateProduct
 from .dto.request.product_update import UpdateProduct
 from .product_mapper import to_entity, toUpdateEntity
+import json
+import tempfile
+import os
+from werkzeug.utils import secure_filename
+from flask import request, abort
 
 
 product = Blueprint("product", "product", url_prefix="/product", description="product routes")
@@ -53,5 +58,42 @@ class ProductsController(MethodView):
       print(f"l'id est : {id}")
       product.update({"id": id})
       return product_service.update_product_by_id(product)
+    
+@product.route("/with-photos")
+class ProductWithPhotosController(MethodView):
+  @product.response(status_code=201, schema=ProductResponse)
+  def post(self):
+    if 'product' not in request.form:
+      abort(400, message="Données du produit manquantes")
+    
+    try:
+      product_data = json.loads(request.form.get('product'))
+    except json.JSONDecodeError as e:
+      abort(400, message=f"Données JSON invalides: {str(e)}")
+    
+    if not request.files:
+      abort(400, message="Aucune photo fournie")
+    
+    with tempfile.TemporaryDirectory() as temp_dir:
+      photo_paths = []
+      
+      for key in request.files:
+        if key.startswith('photo_'):
+          file = request.files[key]
+          filename = secure_filename(file.filename)
+          file_path = os.path.join(temp_dir, filename)
+          file.save(file_path)
+          photo_paths.append(file_path)
+      
+      product = Products(
+        designation=product_data.get('designation'),
+        totalLot=product_data.get('totalLot'),
+        dateCreation=product_data.get('dateCreation'),
+        dateFreeze=product_data.get('dateFreeze', ''),
+        dateDefrost=product_data.get('dateDefrost', ''),
+        nbFreeze=product_data.get('nbFreeze', 0)
+      )
+      
+      return product_service.create_product_with_photos(product, photo_paths)
 
  
