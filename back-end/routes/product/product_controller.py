@@ -34,7 +34,8 @@ class ProductsController(MethodView):
   class SingleProductController(MethodView):
     @product.response(status_code=200, schema=ProductResponse)
     def get(self):
-      return product_service.get_product_by_id()
+      ref = request.args.get('ref')
+      return product_service.get_product_by_id(ref)
     
     
 
@@ -96,4 +97,11 @@ class ProductWithPhotosController(MethodView):
       
       return product_service.create_product_with_photos(product, photo_paths)
 
- 
+@product.route("/get/<string:ref>")
+class ProductByRefController(MethodView):
+    @product.response(status_code=200, schema=ProductResponse)
+    def get(self, ref: str):
+        try:
+            return product_service.get_product_by_ref(ref)
+        except Exception as e:
+            abort(404, message=f"Aucun produit trouvé avec la référence: {ref}")

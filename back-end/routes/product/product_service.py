@@ -12,8 +12,8 @@ class ProductService:
   def create_product(self, p: Products) -> Products:
     return self.repository.create_product(p)
   
-  def get_product_by_id(self):
-    return self.repository.get_product_by_id()
+  def get_product_by_id(self, ref: str) -> Products:
+    return self.repository.get_product_by_id(ref)
   
   def delete_product_by_id(self, id):
     return self.repository.delete_product_by_id(id)
@@ -27,4 +27,15 @@ class ProductService:
   def create_product_with_photos(self, p: Products, photo_paths: list) -> Products:
     return self.repository.create_product_with_photos(p, photo_paths)
   
+  def get_product_by_ref(self, ref: str) -> dict:
+    try:
+        query = self.repo.collection.where("ref", "==", ref).stream()
+        for doc in query:
+            product_data = doc.to_dict()
+            product_data['id'] = doc.id
+            return product_data
+        raise ValueError(f"Aucun produit trouvé avec la référence: {ref}")
+    except Exception as e:
+        print(f"Erreur lors de la récupération du produit: {e}")
+        raise e
   

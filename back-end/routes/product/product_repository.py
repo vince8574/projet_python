@@ -36,18 +36,39 @@ class ProductsRepository:
     def get_all(self) -> list[Products]:
         return [to_entity(product) for product in self.collection.stream()]
 
-    def get_product_by_id(self) -> dict:
-        qr = QrCode()
-        ref = qr.scanner()
+    import traceback
+
+
+    def get_product_by_id(self, ref=None):
+        """
+        Récupère un produit par sa référence
+        :param ref: Référence du produit
+        """
         try:
+            print(f"Recherche du produit avec la référence: {ref}")
+            
+            # Rechercher le produit dans Firestore
             query = self.collection.where("ref", "==", ref).stream()
-            for doc in query:
-                product_data = doc.to_dict()
-                product_data['id'] = doc.id
-                return product_data
-            raise ValueError(f"No product found with ref: {ref}")
+            products = list(query)
+            
+            print(f"Nombre de produits trouvés: {len(products)}")
+            
+            if not products:
+                print(f"Aucun produit trouvé avec la référence: {ref}")
+                return None
+            
+            # Récupérer le premier document correspondant
+            doc = products[0]
+            product_data = doc.to_dict()
+            product_data['id'] = doc.id
+            
+            print(f"Données du produit: {product_data}")
+            
+            return product_data
+        
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print("Erreur lors de la recherche du produit:")
+            print(traceback.format_exc())
             return None
 
     def delete_product_by_id(self, id: str) -> None:
