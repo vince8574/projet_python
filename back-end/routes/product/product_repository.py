@@ -7,7 +7,6 @@ from routes.qr_code.qr_code import QrCode
 from config.database import db, bucket
 from .product import Products
 from .product_mapper import to_entity, to_dict
-import cv2
 from firebase_admin import firestore, storage
 from PyPDF2 import PdfReader, PdfWriter
 import base64
@@ -198,43 +197,6 @@ class ProductsRepository:
         
         return pdf_output
 
-    def take_photo(self, save_path):
-        cam = cv2.VideoCapture(0)
-        if not cam.isOpened():
-            print("Erreur: Impossible d'ouvrir la webcam")
-            return None
-
-        img_counter = 0
-        photos_taken = []
-        camera = True
-        os.makedirs(save_path, exist_ok=True)
-
-        while camera:
-            success, frame = cam.read()
-            if not success:
-                print("Erreur: Impossible de capturer l'image")
-                continue
-
-            cv2.imshow(f"Press Space to take photo & ESC to quit Nb photos: {img_counter}", frame)
-            k = cv2.waitKey(1)
-
-            if k % 256 == 27:
-                cam.release()
-                cv2.destroyAllWindows()
-                camera = False
-                break
-            elif k % 256 == 32:
-                img_name = f"opencv_frame_{img_counter}.png"
-                img_path = os.path.join(save_path, img_name)
-                cv2.imwrite(img_path, frame)
-                photos_taken.append(img_path)
-                img_counter += 1
-                cv2.destroyAllWindows()
-
-        cam.release()
-        cv2.destroyAllWindows()
-
-        return photos_taken
 
     def upload_file_to_storage(self, file, file_name):
         blob = self.bucket.blob(file_name)
@@ -352,31 +314,7 @@ class ProductsRepository:
         _, docRef = self.collection.add(to_dict(p))
         return to_entity(docRef)
 
-    def upload_photos_from_base64(self, base64_images: list, prefix: str) -> list:
-            """Uploads base64 encoded images to storage"""
-            urls = []
-            
-            for i, base64_img in enumerate(base64_images):
-                # Extract base64 data (remove data:image/png;base64, prefix)
-                if ',' in base64_img:
-                    base64_data = base64_img.split(',')[1]
-                else:
-                    base64_data = base64_img
-                
-                # Decode base64 data
-                image_data = base64.b64decode(base64_data)
-                file_stream = BytesIO(image_data)
-                
-                # Upload to Firebase Storage
-                file_name = f"{prefix}_photo_{i}.png"
-                blob = self.bucket.blob(file_name)
-                blob.upload_from_file(file_stream, content_type='image/png')
-                blob.make_public()
-                
-                urls.append(blob.public_url)
-            
-            return urls
-
+    
 def generate_unique_filename(prefix):
         return f"{prefix}_{uuid.uuid4().hex}.pdf"
 
