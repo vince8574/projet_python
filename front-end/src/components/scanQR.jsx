@@ -175,7 +175,7 @@ const ScanQR = () => {
 
             {!afterSubmit && (
                 <div className="mt-16">
-                    <button className="flex items-center px-8 py-2 gap-3 bg-save text-black rounded-lg text-xl font-bold shadow-lg hover:scale-125 transition">
+                    <button className="flex items-center px-8 py-2 gap-3 bg-save text-black rounded-lg text-xl font-bold shadow-lg hover:scale-125 transition" onClick={handleSubmit}>
                         Enregistrer
                         <img src={save} alt="enregistrer" className="h-6 w-auto" />
                     </button>
