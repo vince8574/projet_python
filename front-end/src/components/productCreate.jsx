@@ -154,7 +154,7 @@ const ProductCreate = () => {
           console.log("Envoi FormData avec photos au backend");
           
           // URL correcte pour la route /product/with-photos
-          const response = await fetch('http://192.168.64.108:8080/product/with-photos', {
+          const response = await fetch('http://192.168.1.28:8080/product/with-photos', {
             method: 'POST',
             body: formData,
           });
@@ -194,7 +194,7 @@ const ProductCreate = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
-            <h1 className="text-center font-bold text-4xl uppercase">{afterSubmit ? 'Produit enregistré' : 'Produit'}</h1>
+            <h1 className="text-center font-bold text-4xl uppercase">{afterSubmit ? '' : 'Produit'}</h1>
 
             <div className="rounded-lg bg-white shadow-lg w-full max-w-5xl p-8 md:px-16 md:py-8 mt-8">
                 {/* Afficher les erreurs */}
@@ -306,7 +306,6 @@ const ProductCreate = () => {
                         {/* Affichage du PDF */}
                         {pdfUrl && (
                             <div className="mt-8">
-                                <h3 className="text-lg font-semibold mb-4">Aperçu du PDF (utilisez la touche {`>>`} pour imprimer)</h3>
                                 <div className="border rounded-lg overflow-hidden max-w-full">
                                     <iframe 
                                         src={pdfUrl} 

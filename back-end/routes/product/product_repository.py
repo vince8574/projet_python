@@ -238,7 +238,16 @@ class ProductsRepository:
 
     def upload_file_to_storage(self, file, file_name):
         blob = self.bucket.blob(file_name)
-        blob.upload_from_file(file)
+        
+        # Définir les métadonnées pour que le PDF s'affiche en ligne
+        metadata = {
+            'contentType': 'application/pdf',
+            'contentDisposition': 'inline',
+        }
+        
+        blob.upload_from_file(file, content_type='application/pdf')
+        blob.metadata = metadata
+        blob.patch()
         blob.make_public()
         return blob.public_url
 
