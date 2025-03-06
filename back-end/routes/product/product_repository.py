@@ -10,6 +10,7 @@ from .product_mapper import to_entity, to_dict
 from firebase_admin import firestore, storage
 from PyPDF2 import PdfReader, PdfWriter
 import base64
+import traceback
 
 class ProductsRepository:
     def __init__(self):
