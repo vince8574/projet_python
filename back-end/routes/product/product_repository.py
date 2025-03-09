@@ -336,8 +336,68 @@ class ProductsRepository:
         _, docRef = self.collection.add(to_dict(p))
         return to_entity(docRef)
 
+    def update_product_with_photos(self, data: dict, photo_paths: list = None) -> dict:
+        try:
+            docRef = self.collection.document(data["id"])
+            existing_data = docRef.get().to_dict()
+            
+            # Upload new photos if provided
+            if photo_paths and len(photo_paths) > 0:
+                new_photo_urls = self.upload_files_to_storage(photo_paths, existing_data['ref'])
+                
+                # Combine with existing photos
+                existing_photos = existing_data.get('photos', [])
+                data['photos'] = existing_photos + new_photo_urls
+            
+            # Update PDF and history as in your existing update method
+            new_pdf = self.pdf_maker(existing_data['ref'], data['designation'], 
+                                data['dateCreation'], data['dateFreeze'], data['dateDefrost'])
+            
+            # Handle the history PDF
+            historique_url = existing_data.get('historique')
+            if historique_url:
+                try:
+                    blob_path = historique_url.split(self.bucket.name + "/")[1]
+                    historique_blob = self.bucket.blob(blob_path)
+                    
+                    if historique_blob.exists():
+                        # Download, merge, and upload the history PDF
+                        historique_pdf = BytesIO()
+                        historique_blob.download_to_file(historique_pdf)
+                        historique_pdf.seek(0)
+                        
+                        merged_pdf = self.merge_pdfs(historique_pdf, new_pdf)
+                        historique_blob.delete()
+                        
+                        merged_pdf.seek(0)
+                        unique_hist_filename = generate_unique_filename(f"{existing_data['ref']}_hist")
+                        new_hist_url = self.upload_file_to_storage(merged_pdf, unique_hist_filename)
+                        data['historique'] = new_hist_url
+                    else:
+                        data['historique'] = historique_url
+                except Exception as e:
+                    print(f"Error processing history PDF: {e}")
+                    data['historique'] = historique_url
+            
+            # Upload the new main PDF
+            unique_pdf_filename = generate_unique_filename(existing_data['ref'])
+            new_pdf.seek(0)
+            new_pdf_url = self.upload_file_to_storage(new_pdf, unique_pdf_filename)
+            data['pdf'] = new_pdf_url
+            
+            # Update the product in the database
+            docRef.update(data)
+            
+            # Return the updated data
+            updated_doc = docRef.get()
+            return updated_doc.to_dict()
+        
+        except Exception as e:
+            print(f"Error updating product with photos: {e}")
+            return None
     
 def generate_unique_filename(prefix):
+        import uuid
         return f"{prefix}_{uuid.uuid4().hex}.pdf"
 
     

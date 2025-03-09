@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import MyDatePicker from './datePicker';
 import Camera from './Camera';
 import save from '../assets/save.svg';
@@ -14,11 +14,29 @@ const ProductCreate = () => {
     const [photos, setPhotos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    
+    // Référence pour la section caméra
+    const cameraRef = useRef(null);
+
+    // Fonction pour scroller vers la caméra
+    const scrollToCamera = () => {
+        if (cameraRef.current) {
+            cameraRef.current.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    };
 
     // Gérer les photos capturées par la caméra
     const handleCapturedPhotos = (capturedPhotos) => {
         console.log("Photos reçues du composant Camera:", capturedPhotos.length);
         setPhotos(capturedPhotos);
+    };
+
+    // Gérer le démarrage de la caméra
+    const handleCameraStart = () => {
+        scrollToCamera();
     };
 
     // Préparer les photos avant l'envoi
@@ -153,8 +171,9 @@ const ProductCreate = () => {
       
           console.log("Envoi FormData avec photos au backend");
           
-          // URL correcte pour la route /product/with-photos
-          const response = await fetch('http://192.168.1.28:8080/product/with-photos', {
+          
+       /*home*/  const response = await fetch('http://192.168.1.28:8080/product/with-photos', {
+    // /*    sekoia*/   const response = await fetch('http://192.168.13.70:8080/product/with-photos', {
             method: 'POST',
             body: formData,
           });
@@ -193,28 +212,32 @@ const ProductCreate = () => {
     }, [totalLot]);
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4">
-            <h1 className="text-center font-bold text-4xl uppercase">{afterSubmit ? '' : 'Produit'}</h1>
+        <div className="flex flex-col items-center justify-center w-full p-2 sm:p-4 md:p-6">
+            <h1 className="text-center font-bold text-2xl sm:text-3xl md:text-4xl uppercase my-2 sm:my-4">
+                {afterSubmit ? '' : 'Produit'}
+            </h1>
 
-            <div className="rounded-lg bg-white shadow-lg w-full max-w-5xl p-8 md:px-16 md:py-8 mt-8">
+            <div className="rounded-lg bg-white shadow-lg w-full max-w-5xl p-4 sm:p-6 md:p-8 lg:p-10">
                 {/* Afficher les erreurs */}
                 {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-4 text-sm sm:text-base">
                         <p>{error}</p>
                     </div>
                 )}
                 
                 {!afterSubmit ? (
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                         {/* Champs en ligne */}
-                        <div className="flex flex-col space-y-4">
+                        <div className="flex flex-col space-y-3 sm:space-y-4">
                             {/* Description */}
-                            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8">
-                                <label htmlFor="description" className="text-left text-lg font-semibold md:w-1/3 md:min-w-[200px]">Description :</label>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                                <label htmlFor="description" className="text-left text-base sm:text-lg font-semibold sm:w-1/3 sm:min-w-[150px] md:min-w-[200px]">
+                                    Description :
+                                </label>
                                 <input 
                                     id="description" 
                                     type="text" 
-                                    className="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400" 
+                                    className="flex-1 border rounded-lg px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-blue-400 focus:outline-none" 
                                     value={designation} 
                                     onChange={(e) => setDesignation(e.target.value)} 
                                     required
@@ -222,12 +245,14 @@ const ProductCreate = () => {
                             </div>
 
                             {/* Nombre de lots */}
-                            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8">
-                                <label htmlFor="totalLot" className="text-left text-lg font-semibold md:w-1/3 md:min-w-[200px]">Nombre de lots :</label>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                                <label htmlFor="totalLot" className="text-left text-base sm:text-lg font-semibold sm:w-1/3 sm:min-w-[150px] md:min-w-[200px]">
+                                    Nombre de lots :
+                                </label>
                                 <input 
                                     id="totalLot" 
                                     type="number" 
-                                    className="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400" 
+                                    className="flex-1 border rounded-lg px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-blue-400 focus:outline-none" 
                                     value={totalLot} 
                                     onChange={(e) => setTotalLot(e.target.value)} 
                                     required
@@ -236,33 +261,39 @@ const ProductCreate = () => {
                             </div>
 
                             {/* Date de fabrication */}
-                            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8">
-                                <label className="text-left text-lg font-semibold md:w-1/3 md:min-w-[200px]">Date de fabrication :</label>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                                <label className="text-left text-base sm:text-lg font-semibold sm:w-1/3 sm:min-w-[150px] md:min-w-[200px]">
+                                    Date de fabrication :
+                                </label>
                                 <div className="flex-1">
                                     <MyDatePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
                                 </div>
                             </div>
 
                             {/* Toggle "Congelé" */}
-                            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8">
-                                <label className="text-left text-lg font-semibold md:w-1/3 md:min-w-[200px]">Congelé :</label>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                                <label className="text-left text-base sm:text-lg font-semibold sm:w-1/3 sm:min-w-[150px] md:min-w-[200px]">
+                                    Congelé :
+                                </label>
                                 <button
                                     type="button"
                                     onClick={() => setIsFrozen(!isFrozen)}
-                                    className={`relative w-16 h-8 rounded-full transition-colors duration-300 ${isFrozen ? 'bg-blue-500' : 'bg-gray-300'}`}
+                                    className={`relative w-12 sm:w-16 h-6 sm:h-8 rounded-full transition-colors duration-300 ${isFrozen ? 'bg-blue-500' : 'bg-gray-300'}`}
                                 >
-                                    <span className={`absolute left-1 top-1 w-6 h-6 bg-white rounded-full transition-transform duration-300 ${isFrozen ? 'translate-x-8' : ''}`}></span>
+                                    <span className={`absolute left-1 top-1 w-4 sm:w-6 h-4 sm:h-6 bg-white rounded-full transition-transform duration-300 ${isFrozen ? 'translate-x-6 sm:translate-x-8' : ''}`}></span>
                                 </button>
                             </div>
 
                             {/* Nombre de lots congelés (Affiché uniquement si congelé = true) */}
                             {isFrozen && (
-                                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8">
-                                    <label htmlFor="nbFreeze" className="text-left text-lg font-semibold md:w-1/3 md:min-w-[200px]">Nombre de lots congelés :</label>
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                                    <label htmlFor="nbFreeze" className="text-left text-base sm:text-lg font-semibold sm:w-1/3 sm:min-w-[150px] md:min-w-[200px]">
+                                        Nombre de lots congelés :
+                                    </label>
                                     <input 
                                         id="nbFreeze" 
                                         type="number" 
-                                        className="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400" 
+                                        className="flex-1 border rounded-lg px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-blue-400 focus:outline-none" 
                                         value={nbFreeze} 
                                         onChange={(e) => setNbFreeze(e.target.value)} 
                                         min="0"
@@ -271,33 +302,34 @@ const ProductCreate = () => {
                             )}
                         </div>
 
-                        {/* Composant caméra */}
-                        <div className="mt-8">
-                            <h3 className="text-lg font-semibold mb-2">Photos du produit</h3>
+                        {/* Composant caméra avec ref pour le scroll */}
+                        <div ref={cameraRef} className="mt-4 sm:mt-6 md:mt-8">
+                            <h3 className="text-base sm:text-lg font-semibold mb-2">Photos du produit</h3>
                             <Camera 
                                 onCapture={handleCapturedPhotos} 
-                                onDelete={handleCapturedPhotos} 
+                                onDelete={handleCapturedPhotos}
+                                onCameraStart={handleCameraStart}
                             />
                         </div>
                         
-                        <div className="mt-16 flex justify-center">
+                        <div className="mt-8 sm:mt-12 md:mt-16 flex justify-center">
                             <button 
                                 type="submit" 
-                                className="flex items-center px-8 py-2 gap-3 bg-green-500 text-white rounded-lg text-xl font-bold shadow-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100"
+                                className="flex items-center px-4 sm:px-6 md:px-8 py-2 gap-2 sm:gap-3 bg-green-500 text-white rounded-lg text-base sm:text-lg md:text-xl font-bold shadow-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100"
                                 disabled={loading}
                             >
                                 {loading ? 'Enregistrement...' : 'Enregistrer'}
-                                <img src={save} alt="enregistrer" className="h-6 w-auto" />
+                                <img src={save} alt="enregistrer" className="h-4 sm:h-5 md:h-6 w-auto" />
                             </button>
                         </div>
                     </form>
                 ) : (
                     <div className="text-center">
-                        <div className="mb-8">
-                            <h2 className="text-xl font-bold text-green-600 mb-2">Produit enregistré avec succès!</h2>
+                        <div className="mb-4 sm:mb-6 md:mb-8">
+                            <h2 className="text-lg sm:text-xl font-bold text-green-600 mb-2">Produit enregistré avec succès!</h2>
                             <button 
                                 onClick={handleReset}
-                                className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                                className="mt-2 sm:mt-4 px-4 sm:px-6 py-2 bg-blue-500 text-white text-sm sm:text-base rounded-lg hover:bg-blue-600 transition-colors"
                             >
                                 Créer un nouveau produit
                             </button>
@@ -305,12 +337,12 @@ const ProductCreate = () => {
                         
                         {/* Affichage du PDF */}
                         {pdfUrl && (
-                            <div className="mt-8">
+                            <div className="mt-4 sm:mt-6 md:mt-8">
                                 <div className="border rounded-lg overflow-hidden max-w-full">
                                     <iframe 
                                         src={pdfUrl} 
                                         width="100%" 
-                                        height="600" 
+                                        height="400" 
                                         title="PDF"
                                         className="m-auto"
                                         type="application/pdf"

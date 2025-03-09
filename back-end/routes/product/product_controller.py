@@ -105,3 +105,75 @@ class ProductByRefController(MethodView):
             return product_service.get_product_by_ref(ref)
         except Exception as e:
             abort(404, message=f"Aucun produit trouvé avec la référence: {ref}")
+  
+@product.route("/update-with-photos")
+class UpdateProductWithPhotosController(MethodView):
+    @product.response(status_code=200, schema=ProductResponse)
+    def put(self):
+        if 'product' not in request.form:
+            abort(400, message="Données du produit manquantes")
+        
+        try:
+            product_data = json.loads(request.form.get('product'))
+            print(f"Received product data: {product_data}")
+            
+            # Make sure ID is present
+            if "id" not in product_data:
+                abort(400, message="L'ID du produit est manquant")
+            
+            # Extraire les photos existantes
+            existing_photos = product_data.pop('existingPhotos', []) 
+            
+            # Preserve existing photos
+            if 'photos' not in product_data:
+                product_data['photos'] = existing_photos
+            
+            print(f"Files in request: {list(request.files.keys())}")
+            
+        except json.JSONDecodeError as e:
+            abort(400, message=f"Données JSON invalides: {str(e)}")
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            photo_paths = []
+            
+            # Process photos if present
+            try:
+                for key in request.files:
+                    if key.startswith('photo_'):
+                        file = request.files[key]
+                        print(f"Processing file: {key}, filename: {file.filename}, mimetype: {file.mimetype}")
+                        
+                        if not file.filename:
+                            print(f"Skipping empty filename: {key}")
+                            continue
+                            
+                        filename = secure_filename(file.filename)
+                        file_path = os.path.join(temp_dir, filename)
+                        
+                        # Save file with error handling
+                        try:
+                            file.save(file_path)
+                            print(f"File saved to: {file_path}")
+                            # Check if file was actually saved and has content
+                            if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+                                print(f"File verified: {file_path}, size: {os.path.getsize(file_path)} bytes")
+                                photo_paths.append(file_path)
+                            else:
+                                print(f"❌ File save failed or empty file: {file_path}")
+                        except Exception as save_error:
+                            print(f"❌ Error saving file: {str(save_error)}")
+                
+                print(f"Photos to process: {photo_paths}")
+                
+                # Update product with photos
+                result = product_service.update_product_with_photos(product_data, photo_paths)
+                print(f"Update successful: {result}")
+                return {"product": result}  # Make sure to return a proper JSON object
+            except ValueError as ve:
+                print(f"❌ Validation error: {str(ve)}")
+                abort(400, message=str(ve))
+            except Exception as e:
+                print(f"❌ General error: {str(e)}")
+                import traceback
+                traceback.print_exc()
+                abort(500, message=f"Erreur lors de la mise à jour du produit: {str(e)}")

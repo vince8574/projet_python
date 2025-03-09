@@ -9,6 +9,7 @@ const Introduction = () => {
     const [showScanner, setShowScanner] = useState(false);
     const scannerRef = useRef(null);
     const [scannerInstance, setScannerInstance] = useState(null);
+    const readerRef = useRef(null);
 
     const handleProduct = () => {
         navigate("/product");
@@ -17,15 +18,30 @@ const Introduction = () => {
     const startScanner = () => {
         setShowScanner(true);
         
+        // Ajouté délai pour assurer que le DOM est mis à jour avant de faire défiler
         setTimeout(() => {
             try {
+                // Scroll vers la caméra
+                if (readerRef.current) {
+                    readerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
                 const html5QrCode = new Html5Qrcode("reader");
                 setScannerInstance(html5QrCode);
                 
+                // Configuration adaptative pour la taille de la boîte de scan
                 const config = { 
                     fps: 10, 
-                    qrbox: { width: 250, height: 250 },
-                    aspectRatio: 1.333 // 4:3 aspect ratio
+                    qrbox: (viewfinderWidth, viewfinderHeight) => {
+                        // Utiliser la plus petite dimension pour créer une boîte carrée qui s'adapte à l'écran
+                        const minDimension = Math.min(viewfinderWidth, viewfinderHeight);
+                        const boxSize = Math.min(minDimension, 250);
+                        return {
+                            width: boxSize,
+                            height: boxSize
+                        };
+                    },
+                    aspectRatio: window.innerWidth > 768 ? 1.333 : window.innerHeight / window.innerWidth
                 };
                 
                 html5QrCode.start(
@@ -41,12 +57,13 @@ const Introduction = () => {
                     }
                 ).catch(err => {
                     console.error("Error starting scanner:", err);
+                    alert("Impossible de démarrer le scanner. Vérifiez les permissions.");
                 });
             } catch (error) {
                 console.error("Error initializing scanner:", error);
                 alert("Impossible de démarrer le scanner. Vérifiez les permissions.");
             }
-        }, 100);
+        }, 300); // Augmenté pour s'assurer que le DOM est complètement mis à jour
     };
 
     const stopScanner = () => {
@@ -105,24 +122,38 @@ const Introduction = () => {
         };
     }, [scannerInstance]);
 
+    // Ajout d'un effet pour gérer le redimensionnement
+    useEffect(() => {
+        const handleResize = () => {
+            if (scannerInstance) {
+                // Arrêter et redémarrer le scanner lors du redimensionnement pour adapter la taille
+                stopScanner();
+                setTimeout(startScanner, 500);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [scannerInstance]);
+
     return (
         <>
-            <div className="flex flex-col justify-center items-center w-full">
+            <div className="flex flex-col justify-center items-center w-full px-4 py-6">
                 {!showScanner ? (
-                    <div className="flex justify-around items-center w-full">
+                    <div className="flex flex-col md:flex-row justify-around items-center w-full gap-6">
                         <button
                             onClick={handleProduct}
-                            className="flex flex-col rounded-[15px] items-center justify-center bg-new-product"
+                            className="flex flex-col rounded-[15px] items-center justify-center bg-new-product p-4 w-full md:w-auto transition-transform hover:scale-105"
                         >
-                            <img src={newProduct} alt="nouveau produit" className="h-[250px]"/>
-                            Nouveau produit
+                            <img src={newProduct} alt="nouveau produit" className="h-[150px] md:h-[250px] w-auto object-contain"/>
+                            <span className="mt-2 text-lg font-medium">Nouveau produit</span>
                         </button>
                         <button
                             onClick={startScanner}
-                            className="flex flex-col items-center justify-center rounded-[15px] bg-scanner"
+                            className="flex flex-col items-center justify-center rounded-[15px] bg-scanner p-4 w-full md:w-auto transition-transform hover:scale-105"
                         >
-                            <img src={scan} alt="scanner" className="w-auto h-[250px]"/>
-                            Scanner
+                            <img src={scan} alt="scanner" className="h-[150px] md:h-[250px] w-auto object-contain"/>
+                            <span className="mt-2 text-lg font-medium">Scanner</span>
                         </button>
                     </div>
                 ) : (
@@ -136,9 +167,16 @@ const Introduction = () => {
                         <div className="w-full max-w-lg">
                             <div 
                                 id="reader" 
-                                ref={scannerRef} 
-                                className="w-full"
-                                style={{ minHeight: '400px' }}
+                                ref={(el) => {
+                                    scannerRef.current = el;
+                                    readerRef.current = el;
+                                }}
+                                className="w-full rounded-lg overflow-hidden shadow-lg"
+                                style={{ 
+                                    minHeight: '300px',
+                                    height: 'calc(100vw * 0.75)',
+                                    maxHeight: '500px'
+                                }}
                             ></div>
                         </div>
                         <p className="mt-4 text-center font-medium">Positionnez le QR code devant la caméra</p>
