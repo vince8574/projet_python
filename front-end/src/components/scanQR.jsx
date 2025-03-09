@@ -294,7 +294,7 @@ const preparePhotosForUpload = async () => {
                             </span>
                             <span className="flex-1 px-4 py-2">{totalLot}</span>
                             <button 
-                                className="flex items-center px-8 py-2 gap-3 bg-red-600 text-black rounded-lg text-xl font-bold shadow-lg hover:scale-90 transition" 
+                                className="flex items-center px-8 py-2 gap-3 bg-red-600 text-black rounded-lg font-bold shadow-lg hover:scale-90 transition" 
                                 type="button"
                                 onClick={handleDeleteLot}
                             >
@@ -303,63 +303,65 @@ const preparePhotosForUpload = async () => {
                         </div>
 
                         {/* Section des dates avec alignement uniforme */}
-                        <div className="space-y-4">
-                            {/* Date de création formatée - uniformisé avec les autres dates */}
-                            <div className='flex items-center'>
-                                <span className="w-1/4 font-poppins font-bold">Produit le :</span>
-                                <span className="w-3/4">{formattedCreationDate}</span>
-                            </div>
+<div className="space-y-4">
+    {/* Date de création formatée */}
+    <div className="flex items-center space-x-4">
+        <span className="w-1/3 text-left font-poppins font-bold min-w-[200px]">Produit le :</span>
+        <span className="flex-1 py-2">{formattedCreationDate}</span>
+    </div>
 
-                            {/* Date de congélation */}
-                            <div className='flex items-center'>
-                                <span className="w-1/4 font-poppins font-bold">Congeler le :</span>
-                                <span className="w-3/4 flex items-center">
-                                    {selectedDateFreeze}
-                                    {!selectedDateFreeze && (
-                                        <button 
-                                            className="px-4 py-2 bg-freeze text-black rounded-lg text-sm font-poppins font-bold shadow-md hover:scale-95 transition" 
-                                            type="button"
-                                            onClick={handleFreeze}
-                                        >
-                                            Congeler
-                                        </button>
-                                    )}
-                                </span>
-                            </div>
+    {/* Date de congélation */}
+    <div className="flex items-center space-x-4">
+        <span className="w-1/3 text-left font-poppins font-bold min-w-[200px]">Congeler le :</span>
+        <div className="flex-1 py-2 flex items-center">
+            {selectedDateFreeze}
+            {!selectedDateFreeze && (
+                <button 
+                    className="px-4 py-2 bg-freeze text-black rounded-lg text-sm font-bold shadow-md hover:scale-95 transition" 
+                    type="button"
+                    onClick={handleFreeze}
+                >
+                    Congeler
+                </button>
+            )}
+        </div>
+    </div>
 
-                            {/* Date de décongélation (visible seulement si la date de congélation est définie) */}
-                            {selectedDateFreeze && (
-                                <div className='flex items-center'>
-                                    <span className="w-1/4 font-poppins font-bold">Décongeler le :</span>
-                                    <span className="w-3/4 flex items-center">
-                                        {selectedDateDefrost}
-                                        {!selectedDateDefrost && (
-                                            <button 
-                                                className="px-4 py-2 bg-defrost text-black rounded-lg text-sm font-poppins font-bold shadow-md hover:scale-95 transition" 
-                                                type="button"
-                                                onClick={handleDefrost}
-                                            >
-                                                Décongeler
-                                            </button>
-                                        )}
-                                    </span>
-                                </div>
-                            )}
-                            
-                            {/* Bouton pour afficher l'historique si disponible */}
-                            {data.historique && (
-                                <div className='flex items-center mt-4'>
-                                    <span className="w-1/4 font-poppins font-bold">Historique :</span>
-                                    <button 
-                                        className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-semibold shadow-md hover:scale-95 transition" 
-                                        type="button"
-                                        onClick={toggleHistoricalPdf}
-                                    >
-                                        {showHistoricalPdf ? "Masquer l'historique" : "Afficher l'historique"}
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+    {/* Date de décongélation (visible seulement si la date de congélation est définie) */}
+    {selectedDateFreeze && (
+        <div className="flex items-center space-x-4">
+            <span className="w-1/3 text-left font-poppins font-bold min-w-[200px]">Décongeler le :</span>
+            <div className="flex-1 py-2 flex items-center">
+                {selectedDateDefrost}
+                {!selectedDateDefrost && (
+                    <button 
+                        className="px-4 py-2 bg-defrost text-black rounded-lg text-sm font-bold shadow-md hover:scale-95 transition" 
+                        type="button"
+                        onClick={handleDefrost}
+                    >
+                        Décongeler
+                    </button>
+                )}
+            </div>
+        </div>
+    )}
+    
+    {/* Bouton pour afficher l'historique si disponible */}
+    {data.historique && (
+        <div className="flex items-center space-x-4">
+            <span className="w-1/3 text-left font-poppins font-bold min-w-[200px]">Historique :</span>
+            <div className="flex-1 py-2">
+                <button 
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-semibold shadow-md hover:scale-95 transition" 
+                    type="button"
+                    onClick={toggleHistoricalPdf}
+                >
+                    {showHistoricalPdf ? "Masquer l'historique" : "Afficher l'historique"}
+                </button>
+            </div>
+        </div>
+    )}
+</div>
                         
                         {/* Affichage de l'historique PDF si bouton activé */}
                         {showHistoricalPdf && data.historique && (
