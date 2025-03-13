@@ -66,7 +66,7 @@ const ScanQR = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [showHistoricalPdf, setShowHistoricalPdf] = useState(false);
     
-    // Référence pour la section caméra
+   {/* // Référence pour la section caméra
     const cameraRef = useRef(null);
 
     // Fonction pour scroller vers la caméra
@@ -95,7 +95,7 @@ const ScanQR = () => {
     const deletePhoto = (index) => {
         setPhotos(prevPhotos => prevPhotos.filter((_, i) => i !== index));
     };
-
+*/}
     // Fonction pour formater une date au format dd/MM/yyyy
     const formatDate = (dateString) => {
         if (!dateString) return '';
@@ -302,7 +302,7 @@ const preparePhotosForUpload = async () => {
                             </button>
                         </div>
 
-                        {/* Section des dates avec alignement uniforme */}
+                        
 <div className="space-y-4">
     {/* Date de création formatée */}
     <div className="flex items-center space-x-4">
@@ -389,14 +389,14 @@ const preparePhotosForUpload = async () => {
                                                 alt={`Photo ${index}`}
                                                 className='h-48 w-auto object-cover rounded-lg shadow-md'
                                             />
-                                            {!afterSubmit && (
+                                           {/* {!afterSubmit && (
                                                 <button
                                                     onClick={() => deletePhoto(index)}
                                                     className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                                 >
                                                     X
                                                 </button>
-                                            )}
+                                            )} */}
                                         </div>
                                     ))
                                 ) : (
@@ -406,7 +406,7 @@ const preparePhotosForUpload = async () => {
                         </div>
                         
                         {/* Composant caméra avec ref pour le scroll */}
-                        <div ref={cameraRef} className="mt-8">
+                        {/*<div ref={cameraRef} className="mt-8">
                             <h3 className="text-lg font-semibold mb-2">Ajouter des photos</h3>
                             <Camera 
                                 onCapture={handleCapturedPhotos}
@@ -414,7 +414,7 @@ const preparePhotosForUpload = async () => {
                                 onCameraStart={handleCameraStart}
                                 initialPhotos={photos}
                             />
-                        </div>
+                        </div>*/}
                     </form>
                 )}
             </div>
