@@ -32,5 +32,5 @@ api.register_blueprint(product)
 def index():
     return {"message": "Welcome to the Save Food API!"}
 
-if __name__ == "__main__":
-    server.run(debug=True, port=8080, host="0.0.0.0")
+# if __name__ == "__main__":
+#     server.run(debug=True, port=8080, host="0.0.0.0")
