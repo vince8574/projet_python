@@ -43,8 +43,8 @@ msgpack==1.0.8
 # numexpr @ file:///croot/numexpr_1696515281613/work
 numpy==1.23.0
 # numpy @ file:///croot/numpy_and_numpy_base_1708638617955/work/dist/numpy-1.26.4-cp310-cp310-linux_x86_64.whl#sha256=d8cd837ed43e87f77e6efaa08e8de927ca030a1c9c5d04624432d6fb9a74a5ee
-opencv-python==4.9.0.80
-# opencv-python-headless==4.9.0.80
+# opencv-python==4.9.0.80
+opencv-python-headless==4.9.0.80
 packaging==24.0
 # pandas @ file:///croot/pandas_1709590491089/work/dist/pandas-2.2.1-cp310-cp310-linux_x86_64.whl#sha256=af0f237a7f090add6f15eb4b5d0fd2d9d8ded4cfe6979b18563580353c113c9f
 pillow==10.3.0
@@ -59,7 +59,8 @@ PyPDF2==3.0.1
 # pypng @ file:///home/conda/feedstock_root/build_artifacts/pypng_1657927854370/work
 # python-dateutil @ file:///croot/python-dateutil_1715108784345/work
 # pytz @ file:///croot/pytz_1713974312559/work
-pyzbar @ file:///home/conda/feedstock_root/build_artifacts/pyzbar_1647375809283/work/dist
+pyzbar==0.1.8
+
 # qrcode @ file:///home/conda/feedstock_root/build_artifacts/qrcode_1675713361580/work
 requests==2.31.0
 rsa==4.9
