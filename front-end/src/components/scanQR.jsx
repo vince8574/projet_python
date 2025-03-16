@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import save from '../assets/save.svg';
 import edit from '../assets/edit.svg';
-import Camera from './Camera';
+//import Camera from './Camera';
 
 const EditableDescription = ({ designation, setDesignation }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -63,7 +63,7 @@ const ScanQR = () => {
     const [photos, setPhotos] = useState(data.photos || []);
     const [error, setError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    // const [errorMessage, setErrorMessage] = useState('');
     const [showHistoricalPdf, setShowHistoricalPdf] = useState(false);
     
    {/* // Référence pour la section caméra
@@ -228,7 +228,7 @@ const preparePhotosForUpload = async () => {
       console.log(`Sending ${newPhotos.length} new photos`);
       
       // Send the request with proper error handling
-      const response = await fetch('http://localhost:8080/product/update-with-photos', {
+      const response = await fetch('http://localhost:8080/product/update-with-photos' || 'https://savefood-api.herokuapp.com/product/update-with-photos', {
         method: 'PUT',
         body: formData,
       });

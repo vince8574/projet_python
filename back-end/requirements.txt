@@ -60,7 +60,7 @@ PyPDF2==3.0.1
 # python-dateutil @ file:///croot/python-dateutil_1715108784345/work
 # pytz @ file:///croot/pytz_1713974312559/work
 pyzbar==0.1.8
-# qrcode @ file:///home/conda/feedstock_root/build_artifacts/qrcode_1675713361580/work
+qrcode==8.0
 requests==2.31.0
 rsa==4.9
 # six @ file:///tmp/build/80754af9/six_1644875935023/work
