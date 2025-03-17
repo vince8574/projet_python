@@ -172,7 +172,7 @@ const ProductCreate = () => {
           console.log("Envoi FormData avec photos au backend");
           
           
-        /*home*/  const response = await fetch('http://192.168.1.28:8080/product/with-photos' || 'https://savefood-api.herokuapp.com/product/with-photos', {
+        /*home*/  const response = await fetch('https://savefood-api.herokuapp.com/product/with-photos', {
   //  /*    sekoia*/   const response = await fetch('http://192.168.13.70:8080/product/with-photos' || 'https://savefood-api.herokuapp.com/product/with-photos', {
             method: 'POST',
             body: formData,

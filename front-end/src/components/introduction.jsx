@@ -88,7 +88,7 @@ const Introduction = () => {
             }
             
             // Fetch product data
-            const response = await fetch(`http://localhost:8080/product/scan?ref=${encodeURIComponent(decodedText)}` || `https://savefood-api.herokuapp.com/product/scan?ref=${encodeURIComponent(decodedText)}`, {
+            const response = await fetch(`https://savefood-api.herokuapp.com/product/scan?ref=${encodeURIComponent(decodedText)}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

@@ -228,7 +228,7 @@ const preparePhotosForUpload = async () => {
       console.log(`Sending ${newPhotos.length} new photos`);
       
       // Send the request with proper error handling
-      const response = await fetch('http://localhost:8080/product/update-with-photos' || 'https://savefood-api.herokuapp.com/product/update-with-photos', {
+      const response = await fetch('https://savefood-api.herokuapp.com/product/update-with-photos', {
         method: 'PUT',
         body: formData,
       });
