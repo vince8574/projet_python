@@ -7,7 +7,7 @@ import json
 from routes.product.product_controller import product
 
 server = Flask(__name__)
-CORS(server, ressources={r"/*": {"origins": "http://localhost:5173"}})  # Autorise les requêtes CORS pour toutes les routes
+CORS(server, ressources={r"/*": {"origins": "https://save-food-project.netlify.app"}})  # Autorise les requêtes CORS pour toutes les routes
 
 class APIConfig:
   API_TITLE = "Save Food API V1"
