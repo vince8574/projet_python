@@ -88,7 +88,7 @@ const Introduction = () => {
             }
             
             // Fetch product data
-            const response = await fetch(`https://savefood-api.herokuapp.com/product/scan?ref=${encodeURIComponent(decodedText)}`, {
+            const response = await fetch(`https://savefood-api-2b6c0a130b5f.herokuapp.com/product/scan?ref=${encodeURIComponent(decodedText)}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
