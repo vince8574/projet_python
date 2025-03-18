@@ -214,7 +214,7 @@ class ProductsRepository:
         
         pdf_output = BytesIO()
         pdf_str = pdf.output(dest='S')
-        pdf_output.write(pdf_str)
+        pdf_output.write(pdf_str.encode('utf-8')) 
         pdf_output.seek(0)
         
         return pdf_output
