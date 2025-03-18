@@ -67,15 +67,20 @@ const Introduction = () => {
     };
 
     const stopScanner = () => {
+        
+        setShowScanner(false);
+        
+
         if (scannerInstance) {
             scannerInstance.stop().then(() => {
                 console.log('Scanner arrêté avec succès');
                 setScannerInstance(null);
             }).catch(error => {
                 console.error('Erreur lors de l\'arrêt du scanner:', error);
+                // Même en cas d'erreur, on s'assure que l'état est mis à jour
+                setScannerInstance(null);
             });
         }
-        setShowScanner(false);
     };
 
     const onScanSuccess = async (decodedText) => {
