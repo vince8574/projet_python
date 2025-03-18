@@ -67,20 +67,26 @@ const Introduction = () => {
     };
 
     const stopScanner = () => {
-        
+        // Mettre à jour l'état immédiatement
         setShowScanner(false);
+        setScannerInstance(null);
         
-
+        // Arrêter le scanner de manière asynchrone
         if (scannerInstance) {
-            scannerInstance.stop().then(() => {
+            try {
+                scannerInstance.stop();
                 console.log('Scanner arrêté avec succès');
-                setScannerInstance(null);
-            }).catch(error => {
+            } catch (error) {
                 console.error('Erreur lors de l\'arrêt du scanner:', error);
-                // Même en cas d'erreur, on s'assure que l'état est mis à jour
-                setScannerInstance(null);
-            });
+            }
         }
+        
+        // Forcer une mise à jour de l'interface
+        setTimeout(() => {
+            if (readerRef.current) {
+                readerRef.current.innerHTML = '';
+            }
+        }, 100);
     };
 
     const onScanSuccess = async (decodedText) => {
