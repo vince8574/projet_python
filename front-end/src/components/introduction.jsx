@@ -15,13 +15,36 @@ const Introduction = () => {
         navigate("/product");
     };
 
+    // Force un remontage complet du composant pour réinitialiser tous les états
+    const forceRemount = () => {
+        // On nettoie d'abord complètement le scanner
+        if (scannerInstance) {
+            try {
+                scannerInstance.stop();
+                setScannerInstance(null);
+            } catch (error) {
+                console.error("Erreur arrêt scanner:", error);
+            }
+        }
+        
+        // On vide l'élément DOM
+        if (readerRef.current) {
+            readerRef.current.innerHTML = '';
+        }
+        
+        // On réinitialise l'interface en dernier
+        setShowScanner(false);
+        
+        // Forcer un remontage complet via le router
+        navigate('/', { replace: true });
+        window.location.reload();
+    };
+
     const startScanner = () => {
         setShowScanner(true);
         
-        // Ajouté délai pour assurer que le DOM est mis à jour avant de faire défiler
         setTimeout(() => {
             try {
-                // Scroll vers la caméra
                 if (readerRef.current) {
                     readerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
@@ -29,11 +52,9 @@ const Introduction = () => {
                 const html5QrCode = new Html5Qrcode("reader");
                 setScannerInstance(html5QrCode);
                 
-                // Configuration adaptative pour la taille de la boîte de scan
                 const config = { 
                     fps: 10, 
                     qrbox: (viewfinderWidth, viewfinderHeight) => {
-                        // Utiliser la plus petite dimension pour créer une boîte carrée qui s'adapte à l'écran
                         const minDimension = Math.min(viewfinderWidth, viewfinderHeight);
                         const boxSize = Math.min(minDimension, 250);
                         return {
@@ -49,7 +70,6 @@ const Introduction = () => {
                     config,
                     (decodedText, result) => {
                         console.log("QR Code Scan Success:", decodedText);
-                        console.log("Scan Result:", result);
                         onScanSuccess(decodedText);
                     },
                     (errorMessage) => {
@@ -58,43 +78,19 @@ const Introduction = () => {
                 ).catch(err => {
                     console.error("Error starting scanner:", err);
                     alert("Impossible de démarrer le scanner. Vérifiez les permissions.");
+                    forceRemount();
                 });
             } catch (error) {
                 console.error("Error initializing scanner:", error);
                 alert("Impossible de démarrer le scanner. Vérifiez les permissions.");
+                forceRemount();
             }
-        }, 300); // Augmenté pour s'assurer que le DOM est complètement mis à jour
+        }, 300);
     };
 
-    const stopScanner = async () => {
-        try {
-            // 1. D'abord arrêter complètement le scanner
-            if (scannerInstance) {
-                await scannerInstance.stop();
-                console.log('Scanner arrêté avec succès');
-            }
-            
-            // 2. Nettoyer le DOM du scanner
-            if (readerRef.current) {
-                readerRef.current.innerHTML = '';
-            }
-            
-            // 3. Réinitialiser l'état du scanner
-            setScannerInstance(null);
-            
-            // 4. Changer l'état de l'interface en dernier
-            setShowScanner(false);
-            
-            // 5. Forcer un rafraîchissement complet
-            navigate("/", { replace: true });
-            
-        } catch (error) {
-            console.error('Erreur lors de l\'arrêt du scanner:', error);
-            // Même en cas d'erreur, on force la réinitialisation
-            setScannerInstance(null);
-            setShowScanner(false);
-            navigate("/", { replace: true });
-        }
+    const stopScanner = () => {
+        // Solution drastique : on force un remontage complet du composant
+        forceRemount();
     };
 
     const onScanSuccess = async (decodedText) => {
@@ -104,6 +100,7 @@ const Introduction = () => {
             // Arrêter le scanner
             if (scannerInstance) {
                 await scannerInstance.stop();
+                setScannerInstance(null);
             }
             
             // Fetch product data
@@ -125,7 +122,7 @@ const Introduction = () => {
             navigate("/scan", { state: { data } });
         } catch (error) {
             console.error('Erreur détaillée:', error);
-            setShowScanner(false);
+            forceRemount();
             alert(`Erreur: ${error.message}`);
         }
     };
@@ -141,13 +138,11 @@ const Introduction = () => {
         };
     }, [scannerInstance]);
 
-    // Ajout d'un effet pour gérer le redimensionnement
+    // Gestionnaire de redimensionnement
     useEffect(() => {
         const handleResize = () => {
             if (scannerInstance) {
-                // Arrêter et redémarrer le scanner lors du redimensionnement pour adapter la taille
-                stopScanner();
-                setTimeout(startScanner, 500);
+                forceRemount();
             }
         };
 
