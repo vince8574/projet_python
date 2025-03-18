@@ -212,10 +212,9 @@ class ProductsRepository:
         pdf.cell(50)
         pdf.cell(120, 10, f"Décongelé le: {dateDefrost}")
         
-        # Changement ici - utiliser bytes directement
-        pdf_output = BytesIO()
-        pdf.output(pdf_output)
-        pdf_output.seek(0)
+        # Pour version 1.x
+        pdf_bytes = pdf.output(dest='S').encode('latin-1')  # Utiliser latin-1 au lieu de utf-8
+        pdf_output = BytesIO(pdf_bytes)
         
         return pdf_output
 
