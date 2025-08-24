@@ -1,6 +1,6 @@
 setuptools>=65.5.0
 wheel
-gunicorn
+pip>=24.0
 
 apispec==6.6.1
 blinker==1.8.2
